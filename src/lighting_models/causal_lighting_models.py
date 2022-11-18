@@ -103,8 +103,8 @@ class LightingCausalModelV1(LightningModule):
             cut_generated_tokens,
             input_tokens,
         ):
-            true_texts = f"{input_token} {label}"
-            predicted_texts = f"{input_token} {generated_text}"
+            true_texts = f"{input_token}@@@{label}"
+            predicted_texts = f"{input_token}@@@{generated_text}"
 
             true_texts = true_texts.replace("\n", " ")
             predicted_texts = predicted_texts.replace("\n", " ")
