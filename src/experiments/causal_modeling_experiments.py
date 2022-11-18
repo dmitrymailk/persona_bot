@@ -33,8 +33,8 @@ def experiment_1():
     ).__dict__
 
     hyperparameters = PersonaChatHyperparametersV1(
-        train_batch_size=2,
-        valid_batch_size=2,
+        train_batch_size=16,
+        valid_batch_size=16,
         model_name="gpt2",
         predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
     )
