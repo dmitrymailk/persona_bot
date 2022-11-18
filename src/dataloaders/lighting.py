@@ -131,7 +131,7 @@ class LightningDataModuleV1(LightningDataModule):
                 item = item[key]
                 max_len = max(max_len, len(item))
                 batch_items.append(item)
-            if key in ["input_ids"]:
+            if key in ["input_ids", "custom_labels"]:
                 batch_items = self._padding(
                     batch_items,
                     self.tokenizer.pad_token_id,
@@ -143,7 +143,7 @@ class LightningDataModuleV1(LightningDataModule):
                     0,
                     max_len,
                 )
-            elif key in ["labels", "custom_labels"]:
+            elif key in ["labels"]:
                 batch_items = self._padding(
                     batch_items,
                     self.hyperparameters.pad_token_id,
