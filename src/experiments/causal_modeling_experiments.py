@@ -33,7 +33,7 @@ def experiment_1():
     ).__dict__
 
     hyperparameters = PersonaChatHyperparametersV1(
-        train_batch_size=16,
+        train_batch_size=8,
         valid_batch_size=16,
         model_name="microsoft/DialoGPT-medium",
         predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
