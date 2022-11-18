@@ -22,7 +22,7 @@ def experiment_1():
     parser = ExperimentArgumentParserV1()
     args: TrainArgumentsV1 = parser.args
 
-    max_epochs = 2
+    max_epochs = 4
     if args.debug_status == 1:
         max_epochs = 1
 
