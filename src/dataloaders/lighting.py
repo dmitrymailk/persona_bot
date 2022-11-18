@@ -152,7 +152,7 @@ class LightningDataModuleV1(LightningDataModule):
 
             collated_batch[key] = torch.tensor(
                 batch_items,
-                device=self.device,
+                # device=self.device,
             )
 
         return collated_batch
