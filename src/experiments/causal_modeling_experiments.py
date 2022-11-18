@@ -107,8 +107,8 @@ def experiment_2():
     """
     модели у которых сдвиг токенов не происходит внутри модели
     небходимо самому сдвигать токены и подавать их в модель
-    - blenderbot_small-90M
-    - bart
+    - facebook/blenderbot_small-90M
+    - facebook/bart-base
     """
     parser = ExperimentArgumentParserV1()
     args: TrainArgumentsV1 = parser.args
@@ -126,7 +126,7 @@ def experiment_2():
     hyperparameters = PersonaChatHyperparametersV1(
         train_batch_size=8,
         valid_batch_size=16,
-        model_name="facebook/blenderbot_small-90M",
+        model_name="facebook/bart-base",
         predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
     )
 
