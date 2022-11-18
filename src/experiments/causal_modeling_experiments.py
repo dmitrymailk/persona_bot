@@ -22,7 +22,7 @@ def experiment_1():
     parser = ExperimentArgumentParserV1()
     args: TrainArgumentsV1 = parser.args
 
-    max_epochs = 4
+    max_epochs = 2
     if args.debug_status == 1:
         max_epochs = 1
 
@@ -40,6 +40,7 @@ def experiment_1():
     )
 
     tokenizer = AutoTokenizer.from_pretrained(hyperparameters.model_name)
+    # так надо. https://github.com/huggingface/transformers/issues/2630#issuecomment-684512764
     tokenizer.pad_token_id = tokenizer.eos_token_id
 
     data_module = LightningDataModuleV1(
@@ -51,6 +52,7 @@ def experiment_1():
         base_valid_dataset_class=PersonaChatDatasetV1,
         base_train_sample_class=CausalTrainPersonaSampleV1,
         base_valid_sample_class=CausalValidPersonaSampleV1,
+        debug_status=args.debug_status,
     )
 
     base_model = AutoModelForCausalLM.from_pretrained(hyperparameters.model_name)

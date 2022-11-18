@@ -47,7 +47,7 @@ class LightingCausalModelV1(LightningModule):
 
         loss = predicts.loss
 
-        self.log("train_loss_step", loss)
+        self.log("train_loss", loss)
 
         return loss
 
