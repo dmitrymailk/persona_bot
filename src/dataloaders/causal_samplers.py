@@ -31,6 +31,10 @@ class CausalSampleDictV2(TypedDict):
 
 
 class CausalTrainPersonaSampleV1(BaseDatasetSampleV1):
+    """
+    не сдвигаем labels и не укорачиваем input_ids
+    """
+
     def __init__(
         self,
         dataset_sample: PersonaChatDatasetSampleV1,
@@ -77,6 +81,10 @@ class CausalTrainPersonaSampleV1(BaseDatasetSampleV1):
 
 
 class CausalValidPersonaSampleV1(CausalTrainPersonaSampleV1):
+    """
+    не сдвигаем labels и не укорачиваем input_ids
+    """
+
     def get_sample(self) -> CausalSampleDictV1:
         history = self.dataset_sample["history"]
         history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
@@ -121,6 +129,116 @@ class CausalValidPersonaSampleV1(CausalTrainPersonaSampleV1):
         return CausalSampleDictV2(
             input_ids=input_ids,
             labels=input_ids,
+            custom_labels=custom_labels,
+            attention_mask=attention_mask,
+        )
+
+
+class CausalTrainPersonaSampleV2(BaseDatasetSampleV1):
+    """
+    сдвигаем labels и укорачиваем input_ids
+    """
+
+    def __init__(
+        self,
+        dataset_sample: PersonaChatDatasetSampleV1,
+        tokenizer: AutoTokenizer,
+        hyperparameters: PersonaChatHyperparametersV1,
+    ) -> None:
+        self.dataset_sample = dataset_sample
+        self.tokenizer = tokenizer
+        self.hyperparameters = hyperparameters
+
+    def get_sample(self) -> CausalSampleDictV1:
+        history = self.dataset_sample["history"]
+        history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
+        persona = self.dataset_sample["persona"]
+
+        encoded_history = self.tokenizer.batch_encode_plus(
+            history,
+            add_special_tokens=False,
+            truncation=True,
+        )
+        encoded_history = flat_list(encoded_history["input_ids"])
+
+        encoded_persona = self.tokenizer.batch_encode_plus(
+            persona,
+            add_special_tokens=False,
+            truncation=True,
+        )
+
+        encoded_persona = flat_list(encoded_persona["input_ids"])
+
+        input_ids = [
+            self.tokenizer.bos_token_id,
+            *encoded_persona,
+            *encoded_history,
+            self.tokenizer.eos_token_id,
+        ]
+
+        labels = input_ids[1:]
+        input_ids = input_ids[:-1]
+        attention_mask = [1] * len(input_ids)
+
+        return CausalSampleDictV1(
+            input_ids=input_ids,
+            labels=labels,
+            attention_mask=attention_mask,
+        )
+
+
+class CausalValidPersonaSampleV2(CausalTrainPersonaSampleV1):
+    """
+    сдвигаем labels и укорачиваем input_ids
+    """
+
+    def get_sample(self) -> CausalSampleDictV1:
+        history = self.dataset_sample["history"]
+        history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
+        labels = history.pop()
+        persona = self.dataset_sample["persona"]
+
+        encoded_history = self.tokenizer.batch_encode_plus(
+            history,
+            add_special_tokens=False,
+            truncation=True,
+        )
+        encoded_history = flat_list(encoded_history["input_ids"])
+
+        encoded_persona = self.tokenizer.batch_encode_plus(
+            persona,
+            add_special_tokens=False,
+            truncation=True,
+        )
+
+        encoded_persona = flat_list(encoded_persona["input_ids"])
+
+        encoded_labels = self.tokenizer.batch_encode_plus(
+            [labels],
+            add_special_tokens=False,
+            truncation=True,
+        )
+        encoded_labels = flat_list(encoded_labels["input_ids"])
+
+        input_ids = [
+            self.tokenizer.bos_token_id,
+            *encoded_persona,
+            *encoded_history,
+            # self.tokenizer.eos_token_id,
+        ]
+
+        labels = input_ids[1:]
+        input_ids = input_ids[:-1]
+        attention_mask = [1] * len(input_ids)
+        custom_labels = [
+            # self.tokenizer.bos_token_id,
+            *encoded_labels,
+            self.tokenizer.eos_token_id,
+        ]
+
+        return CausalSampleDictV2(
+            input_ids=input_ids,
+            labels=labels,
             custom_labels=custom_labels,
             attention_mask=attention_mask,
         )

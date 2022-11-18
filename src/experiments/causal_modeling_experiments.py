@@ -2,6 +2,8 @@ from src.dataloaders.persona_chat_dataloaders import PersonaChatDatasetV1
 from src.dataloaders.causal_samplers import (
     CausalTrainPersonaSampleV1,
     CausalValidPersonaSampleV1,
+    CausalTrainPersonaSampleV2,
+    CausalValidPersonaSampleV2,
 )
 from src.dataloaders.lighting import LightningDataModuleV1
 from src.hyperparameters.causal_modeling_hyperparameters import (
@@ -19,6 +21,95 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 
 
 def experiment_1():
+    """
+    модели у которых сдвиг токенов происходит внутри модели
+    - gpt2
+    - microsoft/DialoGPT-medium
+    """
+    parser = ExperimentArgumentParserV1()
+    args: TrainArgumentsV1 = parser.args
+
+    max_epochs = 4
+    if args.debug_status == 1:
+        max_epochs = 1
+
+    lighting_hyperparameters = LightingHyperparametersV1(
+        precision=16,
+        # accumulate_grad_batches=3,
+        max_epochs=max_epochs,
+    ).__dict__
+
+    hyperparameters = PersonaChatHyperparametersV1(
+        train_batch_size=8,
+        valid_batch_size=16,
+        model_name="microsoft/DialoGPT-medium",
+        predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
+    )
+
+    tokenizer = AutoTokenizer.from_pretrained(hyperparameters.model_name)
+    # так надо. https://github.com/huggingface/transformers/issues/2630#issuecomment-684512764
+    tokenizer.pad_token_id = tokenizer.eos_token_id
+    accelerator = "gpu"
+    if args.debug_status == 1:
+        accelerator = "cpu"
+
+    device = "cuda" if accelerator == "gpu" else "cpu"
+
+    data_module = LightningDataModuleV1(
+        train_path_dataset="./datasets/persona_chat/train.json",
+        valid_path_dataset="./datasets/persona_chat/valid.json",
+        hyperparameters=hyperparameters,
+        tokenizer=tokenizer,
+        base_train_dataset_class=PersonaChatDatasetV1,
+        base_valid_dataset_class=PersonaChatDatasetV1,
+        base_train_sample_class=CausalTrainPersonaSampleV1,
+        base_valid_sample_class=CausalValidPersonaSampleV1,
+        debug_status=args.debug_status,
+        device=device,
+    )
+
+    base_model = AutoModelForCausalLM.from_pretrained(hyperparameters.model_name)
+
+    model = LightingCausalModelV1(
+        hyperparameters=hyperparameters,
+        tokenizer=tokenizer,
+        base_model=base_model,
+    )
+
+    checkpoint_callback = ModelCheckpoint(
+        save_top_k=1,
+        monitor="valid_loss_epoch",
+        mode="min",
+        filename=f"{hyperparameters.model_name}"
+        + "-{epoch:02d}-{valid_loss_epoch:.2f}",
+    )
+
+    wandb_logger = WandbLoggerV1(
+        hyperparameters=hyperparameters,
+    )
+
+    trainer = Trainer(
+        accelerator=accelerator,
+        logger=wandb_logger.logger,
+        callbacks=[checkpoint_callback],
+        **lighting_hyperparameters,
+    )
+    if args.debug_status != 1:
+        trainer.validate(model=model, dataloaders=data_module)
+
+    trainer.fit(
+        model,
+        datamodule=data_module,
+    )
+
+
+def experiment_2():
+    """
+    модели у которых сдвиг токенов не происходит внутри модели
+    небходимо самому сдвигать токены и подавать их в модель
+    - blenderbot_small-90M
+    - bart
+    """
     parser = ExperimentArgumentParserV1()
     args: TrainArgumentsV1 = parser.args
 
@@ -50,8 +141,8 @@ def experiment_1():
         tokenizer=tokenizer,
         base_train_dataset_class=PersonaChatDatasetV1,
         base_valid_dataset_class=PersonaChatDatasetV1,
-        base_train_sample_class=CausalTrainPersonaSampleV1,
-        base_valid_sample_class=CausalValidPersonaSampleV1,
+        base_train_sample_class=CausalTrainPersonaSampleV2,
+        base_valid_sample_class=CausalValidPersonaSampleV2,
         debug_status=args.debug_status,
     )
 

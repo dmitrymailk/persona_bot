@@ -52,6 +52,7 @@ class LightningDataModuleV1(LightningDataModule):
         base_train_sample_class: BaseDatasetSampleV1 = None,
         base_valid_sample_class: BaseDatasetSampleV1 = None,
         debug_status: int = 0,
+        device: str = "cpu",
     ) -> None:
         assert debug_status in [0, 1]
         assert base_train_dataset_class is not None
@@ -73,6 +74,7 @@ class LightningDataModuleV1(LightningDataModule):
         self.base_valid_sample_class = base_valid_sample_class
 
         self.debug_status = debug_status
+        self.device = device
 
     def setup(self, stage: Optional[str] = None):
         train_dataset = self.base_train_dataset_class(
@@ -107,6 +109,7 @@ class LightningDataModuleV1(LightningDataModule):
             shuffle=True,
             num_workers=os.cpu_count(),  # type: ignore
             collate_fn=self.train_collate_fn,
+            pin_memory=True,
         )
 
     def val_dataloader(self) -> DataLoader:
@@ -128,7 +131,7 @@ class LightningDataModuleV1(LightningDataModule):
                 item = item[key]
                 max_len = max(max_len, len(item))
                 batch_items.append(item)
-            if key in ["input_ids", "labels", "custom_labels"]:
+            if key in ["input_ids"]:
                 batch_items = self._padding(
                     batch_items,
                     self.tokenizer.pad_token_id,
@@ -140,7 +143,17 @@ class LightningDataModuleV1(LightningDataModule):
                     0,
                     max_len,
                 )
-            collated_batch[key] = torch.tensor(batch_items)
+            elif key in ["labels", "custom_labels"]:
+                batch_items = self._padding(
+                    batch_items,
+                    self.hyperparameters.pad_token_id,
+                    max_len,
+                )
+
+            collated_batch[key] = torch.tensor(
+                batch_items,
+                device=self.device,
+            )
 
         return collated_batch
 
