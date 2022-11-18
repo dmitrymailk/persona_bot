@@ -109,11 +109,11 @@ class CausalValidPersonaSampleV1(CausalTrainPersonaSampleV1):
             self.tokenizer.bos_token_id,
             *encoded_persona,
             *encoded_history,
-            self.tokenizer.eos_token_id,
+            # self.tokenizer.eos_token_id,
         ]
         attention_mask = [1] * len(input_ids)
         custom_labels = [
-            self.tokenizer.bos_token_id,
+            # self.tokenizer.bos_token_id,
             *encoded_labels,
             self.tokenizer.eos_token_id,
         ]
