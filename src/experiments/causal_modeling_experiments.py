@@ -1,30 +1,92 @@
 from src.dataloaders.persona_chat_dataloaders import PersonaChatDatasetV1
-from src.dataloaders.causal_samplers import CausalPersonaSampleV1
+from src.dataloaders.causal_samplers import (
+    CausalTrainPersonaSampleV1,
+    CausalValidPersonaSampleV1,
+)
 from src.dataloaders.lighting import LightningDataModuleV1
 from src.hyperparameters.causal_modeling_hyperparameters import (
     PersonaChatHyperparametersV1,
 )
+from src.lighting_models.causal_lighting_models import LightingCausalModelV1
+from src.hyperparameters.lighting import LightingHyperparametersV1
+from src.utils import ExperimentArgumentParserV1, TrainArgumentsV1, WandbLoggerV1
 
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+
+from pytorch_lightning import Trainer
+from pytorch_lightning.callbacks import ModelCheckpoint
 
 
 def experiment_1():
-    hyperparameters = PersonaChatHyperparametersV1(train_batch_size=2)
-    tokenizer = AutoTokenizer.from_pretrained(hyperparameters.model_name)
+    parser = ExperimentArgumentParserV1()
+    args: TrainArgumentsV1 = parser.args
 
-    lighting_data = LightningDataModuleV1(
+    max_epochs = 4
+    if args.debug_status == 1:
+        max_epochs = 1
+
+    lighting_hyperparameters = LightingHyperparametersV1(
+        precision=16,
+        # accumulate_grad_batches=3,
+        max_epochs=max_epochs,
+    ).__dict__
+
+    hyperparameters = PersonaChatHyperparametersV1(
+        train_batch_size=2,
+        valid_batch_size=2,
+        model_name="gpt2",
+        predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
+    )
+
+    tokenizer = AutoTokenizer.from_pretrained(hyperparameters.model_name)
+    tokenizer.pad_token_id = tokenizer.eos_token_id
+
+    data_module = LightningDataModuleV1(
         train_path_dataset="./datasets/persona_chat/train.json",
         valid_path_dataset="./datasets/persona_chat/valid.json",
         hyperparameters=hyperparameters,
         tokenizer=tokenizer,
         base_train_dataset_class=PersonaChatDatasetV1,
         base_valid_dataset_class=PersonaChatDatasetV1,
-        base_train_sample_class=CausalPersonaSampleV1,
-        base_valid_sample_class=CausalPersonaSampleV1,
+        base_train_sample_class=CausalTrainPersonaSampleV1,
+        base_valid_sample_class=CausalValidPersonaSampleV1,
     )
-    lighting_data.setup()
-    next(iter(lighting_data.train_dataloader()))
-    print("end")
 
+    base_model = AutoModelForCausalLM.from_pretrained(hyperparameters.model_name)
 
-experiment_1()
+    model = LightingCausalModelV1(
+        hyperparameters=hyperparameters,
+        tokenizer=tokenizer,
+        base_model=base_model,
+    )
+
+    checkpoint_callback = ModelCheckpoint(
+        save_top_k=1,
+        monitor="valid_loss_epoch",
+        mode="min",
+        filename=f"{hyperparameters.model_name}"
+        + "-{epoch:02d}-{valid_loss_epoch:.2f}",
+    )
+
+    accelerator = "gpu"
+    if args.debug_status == 1:
+        accelerator = "cpu"
+
+    wandb_logger = WandbLoggerV1(
+        hyperparameters=hyperparameters,
+    )
+
+    trainer = Trainer(
+        accelerator=accelerator,
+        logger=wandb_logger.logger,
+        callbacks=[checkpoint_callback],
+        **lighting_hyperparameters,
+    )
+    if args.debug_status != 1:
+        trainer.validate(model=model, dataloaders=data_module)
+
+    trainer.fit(
+        model,
+        datamodule=data_module,
+    )

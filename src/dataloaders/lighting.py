@@ -128,10 +128,10 @@ class LightningDataModuleV1(LightningDataModule):
                 item = item[key]
                 max_len = max(max_len, len(item))
                 batch_items.append(item)
-            if key in ["input_ids", "labels"]:
+            if key in ["input_ids", "labels", "custom_labels"]:
                 batch_items = self._padding(
                     batch_items,
-                    self.hyperparameters.pad_token_id,
+                    self.tokenizer.pad_token_id,
                     max_len,
                 )
             elif key == "attention_mask":

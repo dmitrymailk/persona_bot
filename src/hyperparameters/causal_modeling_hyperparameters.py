@@ -16,6 +16,7 @@ class BaseHyperparametersV1:
     warmup_steps: int = 0
 
 
+@dataclass
 class PersonaChatHyperparametersV1(BaseHyperparametersV1):
     """
     chat_history_pair_length: int - количество пар диалога с конца
@@ -27,3 +28,8 @@ class PersonaChatHyperparametersV1(BaseHyperparametersV1):
     chat_history_pair_length: int = 1
     max_tokens_length: int = 512
     model_name: str = "gpt2"
+    max_response_length: int = 128
+    project_name: str = "persona_bot"
+    predicted_texts_folder: str = (
+        "/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts"
+    )

@@ -5,12 +5,16 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Debug",
+			"name": "Debug causal model",
 			"type": "python",
 			"request": "launch",
-			"module": "src.experiments.causal_modeling_experiments",
+			"module": "src.train_scripts.causal_training",
 			"console": "integratedTerminal",
-			"justMyCode": true
+			"justMyCode": true,
+			"args": [
+				"--debug_status",
+				"1"
+			]
 		}
 	]
 }

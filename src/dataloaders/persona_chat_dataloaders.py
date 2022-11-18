@@ -29,11 +29,14 @@ class PersonaChatDatasetV1(BaseInitialDatasetV1):
             utterances = item["utterances"]
             for utterance in utterances:
                 history = utterance["history"]
-                dataset_item = PersonaChatDatasetSampleV1(
-                    persona=persona,
-                    history=history,
-                )
-                dataset.append(dataset_item)
+                if len(history) % 2 == 1:
+                    history.pop()
+                if len(history) > 0:
+                    dataset_item = PersonaChatDatasetSampleV1(
+                        persona=persona,
+                        history=history,
+                    )
+                    dataset.append(dataset_item)
 
         return dataset
 

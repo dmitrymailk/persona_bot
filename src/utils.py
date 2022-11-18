@@ -1,7 +1,7 @@
 import argparse
 from dataclasses import dataclass
 from itertools import chain
-from typing import List
+from typing import List, Dict
 
 from datasets import load_metric
 
@@ -11,6 +11,8 @@ from torchmetrics import CHRFScore
 
 from typing import List
 from itertools import chain
+
+from pytorch_lightning.loggers import WandbLogger
 
 
 def flat_list(list_of_lists: List[List] | List) -> List:
@@ -84,3 +86,18 @@ class ExperimentArgumentParserV1:
         args = TrainArgumentsV1(**args)
 
         self.args = args
+
+
+class WandbLoggerV1:
+    def __init__(
+        self,
+        hyperparameters: Dict,
+    ) -> None:
+        self.hyperparameters = hyperparameters
+
+    @property
+    def logger(self) -> WandbLogger:
+        return WandbLogger(
+            project=self.hyperparameters.project_name,
+            name=self.hyperparameters.model_name,
+        )
