@@ -1,7 +1,11 @@
 import os
+from typing import List
 
-from src.hyperparameters.causal_modeling_hyperparameters import BaseHyperparametersV1
+from src.hyperparameters.causal_modeling_hyperparameters import (
+    PersonaChatHyperparametersV1,
+)
 from src.utils import TextEvaluator
+from src.database_logger.logger import DatabaseLoggerV1
 
 from pytorch_lightning import LightningModule
 
@@ -16,7 +20,7 @@ import wandb
 class LightingCausalModelV1(LightningModule):
     def __init__(
         self,
-        hyperparameters: BaseHyperparametersV1,
+        hyperparameters: PersonaChatHyperparametersV1,
         tokenizer: AutoTokenizer,
         base_model: AutoModelForCausalLM,
     ) -> None:
@@ -30,6 +34,11 @@ class LightingCausalModelV1(LightningModule):
         self.text_evaluator = TextEvaluator()
 
         self.model = base_model
+        self.database_logger = None
+
+        # я сначала выполняю валидацию сам
+        # если брать значение из кода, то оно будет два раза в начале 0
+        self.custom_current_epoch = -1
 
         self.predicts = {
             "valid": {},
@@ -40,6 +49,7 @@ class LightingCausalModelV1(LightningModule):
         batch,
         batch_idx: int,
     ):
+        self.__create_database_logger()
 
         predicts = self.model(
             **batch,
@@ -56,6 +66,8 @@ class LightingCausalModelV1(LightningModule):
         batch,
         batch_idx: int,
     ):
+        self.__create_database_logger()
+
         predicts = self.model(
             input_ids=batch["input_ids"],
             attention_mask=batch["attention_mask"],
@@ -96,16 +108,18 @@ class LightingCausalModelV1(LightningModule):
 
         # save texts for later analysis
         self.save_generation_predicts(
+            prediction_ids=batch["sample_id"],
             decoded_labels=decoded_labels,
             cut_generated_tokens=cut_generated_tokens,
             input_tokens=input_tokens,
+            persona=batch["persona"],
         )
 
         loss = predicts.loss
 
         self.log_dict(
             {
-                "valid_loss": loss,
+                "valid_loss": loss.detach().item(),
                 "valid_blue_score": text_metrics["blue_score"],
                 "valid_rougeL_score": text_metrics["rougeL_score"],
                 "valid_chrf_score": text_metrics["chrf_score"],
@@ -151,25 +165,41 @@ class LightingCausalModelV1(LightningModule):
 
         return [optimizer], [scheduler]
 
-    def on_train_epoch_end(self):
-        pass
+    def validation_epoch_end(self, outputs):
 
-    def on_validation_epoch_end(self) -> None:
-        pass
+        if self.database_logger is not None:
+            self.database_logger.save_metrics(
+                epoch=self.custom_current_epoch,
+                valid_loss_epoch=self.trainer.callback_metrics["valid_loss"],
+                blue_score_epoch=self.trainer.callback_metrics[
+                    "valid_blue_score_epoch"
+                ],
+                rougel_score_epoch=self.trainer.callback_metrics[
+                    "valid_rougeL_score_epoch"
+                ],
+                charf_score_epoch=self.trainer.callback_metrics[
+                    "valid_chrf_score_epoch"
+                ],
+            )
+        self.custom_current_epoch += 1
 
     def save_generation_predicts(
         self,
-        decoded_labels,
-        cut_generated_tokens,
-        input_tokens,
+        prediction_ids: List[str],
+        persona: List[str],
+        decoded_labels: List[str],
+        cut_generated_tokens: List[str],
+        input_tokens: List[str],
     ):
         run_id = wandb.run.id
-        epoch = self.current_epoch
+        epoch = self.custom_current_epoch
         paired_texts = []
-        for label, generated_text, input_token in zip(
+        for label, generated_text, input_token, prediction_id, persona_item in zip(
             decoded_labels,
             cut_generated_tokens,
             input_tokens,
+            prediction_ids,
+            persona,
         ):
             true_texts = f"{input_token}@@@{label}"
             predicted_texts = f"{input_token}@@@{generated_text}"
@@ -179,6 +209,18 @@ class LightingCausalModelV1(LightningModule):
 
             pair = "\n".join([true_texts, predicted_texts])
             paired_texts.append(pair)
+            persona_item = " ".join(persona_item)
+
+            # log to database
+            if self.database_logger is not None:
+                self.database_logger.save_prediction(
+                    actual_response=label,
+                    context=input_token,
+                    epoch=epoch,
+                    model_prediction=generated_text,
+                    persona=persona_item,
+                    prediction_id=prediction_id,
+                )
 
         paired_texts = "\n\n".join(paired_texts)
 
@@ -190,3 +232,10 @@ class LightingCausalModelV1(LightningModule):
         # append to file
         with open(f"{save_folder_path}/{epoch}.txt", "a") as f:
             f.write(paired_texts)
+
+    def __create_database_logger(self):
+        if wandb.run is not None:
+            self.database_logger = DatabaseLoggerV1(
+                wandb_run_id=wandb.run.id,
+                hyperparameters=self.hyperparameters,
+            )

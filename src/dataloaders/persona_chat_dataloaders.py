@@ -11,6 +11,7 @@ class PersonaChatDatasetSampleV1(TypedDict):
 
     persona: List[str]
     history: List[str]
+    sample_id: str
 
 
 class PersonaChatDatasetV1(BaseInitialDatasetV1):
@@ -24,17 +25,19 @@ class PersonaChatDatasetV1(BaseInitialDatasetV1):
         initial_dataset: Dict,
     ) -> List[PersonaChatDatasetSampleV1]:
         dataset = []
-        for item in initial_dataset:
-            persona = item["personality"]
-            utterances = item["utterances"]
-            for utterance in utterances:
+        for dialogue_id, dialogue in enumerate(initial_dataset):
+            persona = dialogue["personality"]
+            utterances = dialogue["utterances"]
+            for utterance_id, utterance in enumerate(utterances):
                 history = utterance["history"]
+                sample_id = f"{dialogue_id}_{utterance_id}"
                 if len(history) % 2 == 1:
                     history.pop()
                 if len(history) > 0:
                     dataset_item = PersonaChatDatasetSampleV1(
                         persona=persona,
                         history=history,
+                        sample_id=sample_id,
                     )
                     dataset.append(dataset_item)
 

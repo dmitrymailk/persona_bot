@@ -122,6 +122,7 @@ class LightningDataModuleV1(LightningDataModule):
         )
 
     def train_collate_fn(self, batch):
+        # TODO: remove repetitions
         collated_batch = {}
 
         for key in batch[0].keys():
@@ -129,7 +130,8 @@ class LightningDataModuleV1(LightningDataModule):
             max_len = 0
             for item in batch:
                 item = item[key]
-                max_len = max(max_len, len(item))
+                if isinstance(item, list):
+                    max_len = max(max_len, len(item))
                 batch_items.append(item)
             if key in ["input_ids", "custom_labels"]:
                 batch_items = self._padding(
@@ -137,11 +139,17 @@ class LightningDataModuleV1(LightningDataModule):
                     self.tokenizer.pad_token_id,
                     max_len,
                 )
+                collated_batch[key] = torch.tensor(
+                    batch_items,
+                )
             elif key == "attention_mask":
                 batch_items = self._padding(
                     batch_items,
                     0,
                     max_len,
+                )
+                collated_batch[key] = torch.tensor(
+                    batch_items,
                 )
             elif key in ["labels"]:
                 batch_items = self._padding(
@@ -149,11 +157,11 @@ class LightningDataModuleV1(LightningDataModule):
                     self.hyperparameters.pad_token_id,
                     max_len,
                 )
-
-            collated_batch[key] = torch.tensor(
-                batch_items,
-                # device=self.device,
-            )
+                collated_batch[key] = torch.tensor(
+                    batch_items,
+                )
+            else:
+                collated_batch[key] = batch_items
 
         return collated_batch
 

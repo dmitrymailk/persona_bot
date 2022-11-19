@@ -57,6 +57,10 @@ def experiment_1():
 
     device = "cuda" if accelerator == "gpu" else "cpu"
 
+    wandb_logger = WandbLoggerV1(
+        hyperparameters=hyperparameters,
+    )
+
     data_module = LightningDataModuleV1(
         train_path_dataset="./datasets/persona_chat/train.json",
         valid_path_dataset="./datasets/persona_chat/valid.json",
@@ -84,10 +88,6 @@ def experiment_1():
         mode="min",
         filename=f"{hyperparameters.model_name}"
         + "-{epoch:02d}-{valid_loss_epoch:.2f}",
-    )
-
-    wandb_logger = WandbLoggerV1(
-        hyperparameters=hyperparameters,
     )
 
     trainer = Trainer(

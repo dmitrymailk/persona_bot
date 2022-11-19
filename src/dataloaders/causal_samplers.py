@@ -28,6 +28,8 @@ class CausalSampleDictV2(TypedDict):
     labels: List[int]
     attention_mask: List[int]
     custom_labels: List[int]
+    sample_id: str
+    persona: str
 
 
 class CausalTrainPersonaSampleV1(BaseDatasetSampleV1):
@@ -90,6 +92,7 @@ class CausalValidPersonaSampleV1(CausalTrainPersonaSampleV1):
         history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
         labels = history.pop()
         persona = self.dataset_sample["persona"]
+        sample_id = self.dataset_sample["sample_id"]
 
         encoded_history = self.tokenizer.batch_encode_plus(
             history,
@@ -131,6 +134,8 @@ class CausalValidPersonaSampleV1(CausalTrainPersonaSampleV1):
             labels=input_ids,
             custom_labels=custom_labels,
             attention_mask=attention_mask,
+            sample_id=sample_id,
+            persona=persona,
         )
 
 
@@ -197,6 +202,7 @@ class CausalValidPersonaSampleV2(CausalTrainPersonaSampleV1):
         history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
         labels = history.pop()
         persona = self.dataset_sample["persona"]
+        sample_id = self.dataset_sample["sample_id"]
 
         encoded_history = self.tokenizer.batch_encode_plus(
             history,
@@ -241,4 +247,6 @@ class CausalValidPersonaSampleV2(CausalTrainPersonaSampleV1):
             labels=labels,
             custom_labels=custom_labels,
             attention_mask=attention_mask,
+            sample_id=sample_id,
+            persona=persona,
         )
