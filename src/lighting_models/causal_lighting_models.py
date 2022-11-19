@@ -95,33 +95,11 @@ class LightingCausalModelV1(LightningModule):
         )
 
         # save texts for later analysis
-        run_id = wandb.run.id
-        epoch = self.current_epoch
-        paired_texts = []
-        for label, generated_text, input_token in zip(
-            decoded_labels,
-            cut_generated_tokens,
-            input_tokens,
-        ):
-            true_texts = f"{input_token}@@@{label}"
-            predicted_texts = f"{input_token}@@@{generated_text}"
-
-            true_texts = true_texts.replace("\n", " ")
-            predicted_texts = predicted_texts.replace("\n", " ")
-
-            pair = "\n".join([true_texts, predicted_texts])
-            paired_texts.append(pair)
-
-        paired_texts = "\n\n".join(paired_texts)
-
-        save_folder_path = f"{self.hyperparameters.predicted_texts_folder}/{run_id}"
-        # create folder if not exists
-        if not os.path.exists(save_folder_path):
-            os.makedirs(save_folder_path)
-
-        # append to file
-        with open(f"{save_folder_path}/{epoch}.txt", "a") as f:
-            f.write(paired_texts)
+        self.save_generation_predicts(
+            decoded_labels=decoded_labels,
+            cut_generated_tokens=cut_generated_tokens,
+            input_tokens=input_tokens,
+        )
 
         loss = predicts.loss
 
@@ -178,3 +156,37 @@ class LightingCausalModelV1(LightningModule):
 
     def on_validation_epoch_end(self) -> None:
         pass
+
+    def save_generation_predicts(
+        self,
+        decoded_labels,
+        cut_generated_tokens,
+        input_tokens,
+    ):
+        run_id = wandb.run.id
+        epoch = self.current_epoch
+        paired_texts = []
+        for label, generated_text, input_token in zip(
+            decoded_labels,
+            cut_generated_tokens,
+            input_tokens,
+        ):
+            true_texts = f"{input_token}@@@{label}"
+            predicted_texts = f"{input_token}@@@{generated_text}"
+
+            true_texts = true_texts.replace("\n", " ")
+            predicted_texts = predicted_texts.replace("\n", " ")
+
+            pair = "\n".join([true_texts, predicted_texts])
+            paired_texts.append(pair)
+
+        paired_texts = "\n\n".join(paired_texts)
+
+        save_folder_path = f"{self.hyperparameters.predicted_texts_folder}/{run_id}"
+        # create folder if not exists
+        if not os.path.exists(save_folder_path):
+            os.makedirs(save_folder_path)
+
+        # append to file
+        with open(f"{save_folder_path}/{epoch}.txt", "a") as f:
+            f.write(paired_texts)

@@ -101,3 +101,24 @@ class WandbLoggerV1:
             project=self.hyperparameters.project_name,
             name=self.hyperparameters.model_name,
         )
+
+
+class WandbLoggerV2:
+    def __init__(
+        self,
+        hyperparameters: Dict,
+        notes: str = "",
+        tags: List[str] = [],
+    ) -> None:
+        self.hyperparameters = hyperparameters
+        self.notes = notes
+        self.tags = tags
+
+    @property
+    def logger(self) -> WandbLogger:
+        return WandbLogger(
+            project=self.hyperparameters.project_name,
+            name=self.hyperparameters.model_name,
+            notes=self.notes,
+            tags=self.tags,
+        )
