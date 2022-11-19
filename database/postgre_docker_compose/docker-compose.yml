@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  nlp_database:
+    image: postgres:14.1-alpine
+    command:
+      [
+        "postgres",
+        "-c",
+        "config_file=/etc/postgresql.conf",
+        "-c",
+        "hba_file=/etc/pg_hba.conf"
+      ]
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=nlp_database
+    ports:
+      - '2345:5432'
+    volumes:
+      - nlp_database_volume:/var/lib/postgresql/data
+      - ./pg_hba.conf:/etc/pg_hba.conf
+      - ./postgresql.conf:/etc/postgresql.conf
+
+volumes:
+  nlp_database_volume:
