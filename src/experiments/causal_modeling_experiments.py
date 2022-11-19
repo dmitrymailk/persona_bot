@@ -111,7 +111,8 @@ def experiment_2():
     - facebook/bart-base
     - google/bigbird-pegasus-large-arxiv
     - facebook/blenderbot-400M-distill
-    - roberta-base
+    - roberta-base - не работает
+    - RUCAIBox/mvp
     """
     parser = ExperimentArgumentParserV1()
     args: TrainArgumentsV1 = parser.args
@@ -129,7 +130,7 @@ def experiment_2():
     hyperparameters = PersonaChatHyperparametersV1(
         train_batch_size=8,
         valid_batch_size=16,
-        model_name="roberta-base",
+        model_name="RUCAIBox/mvp",
         predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
     )
 
