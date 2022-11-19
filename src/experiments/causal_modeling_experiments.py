@@ -25,7 +25,8 @@ def experiment_1():
     модели у которых сдвиг токенов происходит внутри модели
     - gpt2
     - microsoft/DialoGPT-medium
-    - RUCAIBox/mvp
+    - RUCAIBox/mvp - не работает
+    - roberta-base - не работает
     """
     parser = ExperimentArgumentParserV1()
     args: TrainArgumentsV1 = parser.args
@@ -41,9 +42,9 @@ def experiment_1():
     ).__dict__
 
     hyperparameters = PersonaChatHyperparametersV1(
-        train_batch_size=8,
+        train_batch_size=16,
         valid_batch_size=16,
-        model_name="RUCAIBox/mvp",
+        model_name="gpt2",
         predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
     )
 
