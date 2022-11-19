@@ -110,6 +110,7 @@ def experiment_2():
     - facebook/blenderbot_small-90M
     - facebook/bart-base
     - google/bigbird-pegasus-large-arxiv
+    - facebook/blenderbot-400M-distill
     """
     parser = ExperimentArgumentParserV1()
     args: TrainArgumentsV1 = parser.args
@@ -127,7 +128,7 @@ def experiment_2():
     hyperparameters = PersonaChatHyperparametersV1(
         train_batch_size=8,
         valid_batch_size=16,
-        model_name="google/bigbird-pegasus-large-arxiv",
+        model_name="facebook/blenderbot-400M-distill",
         predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
     )
 
