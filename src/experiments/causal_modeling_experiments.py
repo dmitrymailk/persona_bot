@@ -37,8 +37,8 @@ def experiment_1():
     args: TrainArgumentsV1 = parser.args
 
     max_epochs = 4
-    # if args.debug_status == 1:
-    #     max_epochs = 1
+    if args.debug_status == 1:
+        max_epochs = 2
 
     lighting_hyperparameters = LightingHyperparametersV1(
         precision=16,
@@ -57,9 +57,10 @@ def experiment_1():
     tokenizer = AutoTokenizer.from_pretrained(hyperparameters.model_name)
     # так надо. https://github.com/huggingface/transformers/issues/2630#issuecomment-684512764
     tokenizer.pad_token_id = tokenizer.eos_token_id
+
     accelerator = "gpu"
-    # if args.debug_status == 1:
-    #     accelerator = "cpu"
+    if args.debug_status == 1:
+        accelerator = "cpu"
 
     device = "cuda" if accelerator == "gpu" else "cpu"
 
@@ -109,8 +110,8 @@ def experiment_1():
         callbacks=[checkpoint_callback],
         **lighting_hyperparameters,
     )
-    # if args.debug_status != 1:
-    #     trainer.validate(model=model, dataloaders=data_module)
+    if args.debug_status != 1:
+        trainer.validate(model=model, dataloaders=data_module)
 
     trainer.fit(
         model,

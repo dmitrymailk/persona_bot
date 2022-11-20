@@ -167,9 +167,7 @@ class LightingCausalModelV1(LightningModule):
 
     def validation_epoch_end(self, outputs):
 
-        if self.database_logger is not None:
-            if not self.trainer.sanity_checking:
-                self.custom_current_epoch += 1
+        if not self.trainer.sanity_checking and self.database_logger is not None:
 
             self.database_logger.save_metrics(
                 epoch=self.custom_current_epoch,
@@ -184,6 +182,8 @@ class LightingCausalModelV1(LightningModule):
                     "valid_chrf_score_epoch"
                 ],
             )
+
+            self.custom_current_epoch += 1
 
     def save_generation_predicts(
         self,
