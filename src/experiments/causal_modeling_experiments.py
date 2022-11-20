@@ -51,6 +51,7 @@ def experiment_1():
         valid_batch_size=16,
         model_name="gpt2",
         predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
+        debug_status=args.debug_status,
     )
 
     tokenizer = AutoTokenizer.from_pretrained(hyperparameters.model_name)
