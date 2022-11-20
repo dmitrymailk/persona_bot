@@ -166,7 +166,6 @@ class LightingCausalModelV1(LightningModule):
         return [optimizer], [scheduler]
 
     def validation_epoch_end(self, outputs):
-
         if self.database_logger is not None:
             self.database_logger.save_metrics(
                 epoch=self.custom_current_epoch,
@@ -181,7 +180,9 @@ class LightingCausalModelV1(LightningModule):
                     "valid_chrf_score_epoch"
                 ],
             )
-        self.custom_current_epoch += 1
+
+        if not self.trainer.sanity_checking:
+            self.custom_current_epoch += 1
 
     def save_generation_predicts(
         self,
@@ -191,47 +192,48 @@ class LightingCausalModelV1(LightningModule):
         cut_generated_tokens: List[str],
         input_tokens: List[str],
     ):
-        run_id = wandb.run.id
-        epoch = self.custom_current_epoch
-        paired_texts = []
-        for label, generated_text, input_token, prediction_id, persona_item in zip(
-            decoded_labels,
-            cut_generated_tokens,
-            input_tokens,
-            prediction_ids,
-            persona,
-        ):
-            true_texts = f"{input_token}@@@{label}"
-            predicted_texts = f"{input_token}@@@{generated_text}"
+        if not self.trainer.sanity_checking:
+            run_id = wandb.run.id
+            epoch = self.custom_current_epoch
+            paired_texts = []
+            for label, generated_text, input_token, prediction_id, persona_item in zip(
+                decoded_labels,
+                cut_generated_tokens,
+                input_tokens,
+                prediction_ids,
+                persona,
+            ):
+                true_texts = f"{input_token}@@@{label}"
+                predicted_texts = f"{input_token}@@@{generated_text}"
 
-            true_texts = true_texts.replace("\n", " ")
-            predicted_texts = predicted_texts.replace("\n", " ")
+                true_texts = true_texts.replace("\n", " ")
+                predicted_texts = predicted_texts.replace("\n", " ")
 
-            pair = "\n".join([true_texts, predicted_texts])
-            paired_texts.append(pair)
-            persona_item = " ".join(persona_item)
+                pair = "\n".join([true_texts, predicted_texts])
+                paired_texts.append(pair)
+                persona_item = " ".join(persona_item)
 
-            # log to database
-            if self.database_logger is not None:
-                self.database_logger.save_prediction(
-                    actual_response=label,
-                    context=input_token,
-                    epoch=epoch,
-                    model_prediction=generated_text,
-                    persona=persona_item,
-                    prediction_id=prediction_id,
-                )
+                # log to database
+                if self.database_logger is not None:
+                    self.database_logger.save_prediction(
+                        actual_response=label,
+                        context=input_token,
+                        epoch=epoch,
+                        model_prediction=generated_text,
+                        persona=persona_item,
+                        prediction_id=prediction_id,
+                    )
 
-        paired_texts = "\n\n".join(paired_texts)
+            paired_texts = "\n\n".join(paired_texts)
 
-        save_folder_path = f"{self.hyperparameters.predicted_texts_folder}/{run_id}"
-        # create folder if not exists
-        if not os.path.exists(save_folder_path):
-            os.makedirs(save_folder_path)
+            save_folder_path = f"{self.hyperparameters.predicted_texts_folder}/{run_id}"
+            # create folder if not exists
+            if not os.path.exists(save_folder_path):
+                os.makedirs(save_folder_path)
 
-        # append to file
-        with open(f"{save_folder_path}/{epoch}.txt", "a") as f:
-            f.write(paired_texts)
+            # append to file
+            with open(f"{save_folder_path}/{epoch}.txt", "a") as f:
+                f.write(paired_texts)
 
     def __create_database_logger(self):
         if wandb.run is not None:

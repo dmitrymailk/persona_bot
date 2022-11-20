@@ -37,8 +37,8 @@ def experiment_1():
     args: TrainArgumentsV1 = parser.args
 
     max_epochs = 4
-    if args.debug_status == 1:
-        max_epochs = 1
+    # if args.debug_status == 1:
+    #     max_epochs = 1
 
     lighting_hyperparameters = LightingHyperparametersV1(
         precision=16,
@@ -47,9 +47,9 @@ def experiment_1():
     ).__dict__
 
     hyperparameters = PersonaChatHyperparametersV1(
-        train_batch_size=8,
+        train_batch_size=8 * 2,
         valid_batch_size=16,
-        model_name="microsoft/DialoGPT-medium",
+        model_name="gpt2",
         predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
     )
 
@@ -57,8 +57,8 @@ def experiment_1():
     # так надо. https://github.com/huggingface/transformers/issues/2630#issuecomment-684512764
     tokenizer.pad_token_id = tokenizer.eos_token_id
     accelerator = "gpu"
-    if args.debug_status == 1:
-        accelerator = "cpu"
+    # if args.debug_status == 1:
+    #     accelerator = "cpu"
 
     device = "cuda" if accelerator == "gpu" else "cpu"
 
