@@ -1,3 +1,15 @@
 {
-	"jupyter.notebookFileRoot": "${workspaceFolder}"
+	"jupyter.notebookFileRoot": "${workspaceFolder}",
+	"sqltools.connections": [
+		{
+			"previewLimit": 50,
+			"server": "localhost",
+			"port": 2345,
+			"driver": "PostgreSQL",
+			"name": "nlp_database",
+			"database": "nlp_database",
+			"username": "postgres",
+			"password": "postgres"
+		}
+	]
 }

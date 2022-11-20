@@ -68,3 +68,25 @@ class DatabaseLoggerV1:
             actual_response=actual_response,
             debug_status=self.hyperparameters.debug_status,
         )
+
+
+class DatabaseAnalaizerV1:
+    def __init__(self):
+        self.db = None
+        self.__connect_database()
+
+    def __connect_database(self):
+        db = pw.PostgresqlDatabase(
+            "nlp_database",
+            user="postgres",
+            password="postgres",
+            host="0.0.0.0",
+            port=2345,
+            autorollback=True,
+        )
+        db.connect()
+        self.db = db
+
+    def execute_sql(self, query: str):
+        cursor = self.db.execute_sql(query)
+        return cursor.fetchall()
