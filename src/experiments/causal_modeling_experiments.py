@@ -11,7 +11,12 @@ from src.hyperparameters.causal_modeling_hyperparameters import (
 )
 from src.lighting_models.causal_lighting_models import LightingCausalModelV1
 from src.hyperparameters.lighting import LightingHyperparametersV1
-from src.utils import ExperimentArgumentParserV1, TrainArgumentsV1, WandbLoggerV1
+from src.utils import (
+    ExperimentArgumentParserV1,
+    TrainArgumentsV1,
+    WandbLoggerV1,
+    WandbLoggerV2,
+)
 
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
@@ -42,9 +47,9 @@ def experiment_1():
     ).__dict__
 
     hyperparameters = PersonaChatHyperparametersV1(
-        train_batch_size=16,
+        train_batch_size=8,
         valid_batch_size=16,
-        model_name="gpt2",
+        model_name="microsoft/DialoGPT-medium",
         predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
     )
 
@@ -57,8 +62,15 @@ def experiment_1():
 
     device = "cuda" if accelerator == "gpu" else "cpu"
 
-    wandb_logger = WandbLoggerV1(
+    notes = """
+    дефолтная AutoModelForCausalLM.
+    контекст=вся персона+последний вопрос от пользователя
+    таргет=ответ от пользователя
+    """
+    wandb_logger = WandbLoggerV2(
         hyperparameters=hyperparameters,
+        tags=["causal_modeling", "experiment_1"],
+        notes=notes,
     )
 
     data_module = LightningDataModuleV1(
