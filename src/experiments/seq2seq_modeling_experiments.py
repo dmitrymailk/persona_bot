@@ -43,9 +43,10 @@ def experiment_1():
     hyperparameters = PersonaChatHyperparametersV1(
         train_batch_size=8 * 2,
         valid_batch_size=16,
-        model_name="t5-small",
+        model_name="t5-base",
         predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
         debug_status=args.debug_status,
+        model_architecture="seq2seq",
     )
 
     tokenizer = AutoTokenizer.from_pretrained(hyperparameters.model_name)
