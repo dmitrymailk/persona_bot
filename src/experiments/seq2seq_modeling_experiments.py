@@ -26,6 +26,8 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 def experiment_1():
     """
     - t5-small
+    - t5-base
+    - facebook/bart-base
     """
     parser = ExperimentArgumentParserV1()
     args: TrainArgumentsV1 = parser.args
@@ -41,9 +43,9 @@ def experiment_1():
     ).__dict__
 
     hyperparameters = PersonaChatHyperparametersV1(
-        train_batch_size=8 * 2,
+        train_batch_size=8,
         valid_batch_size=16,
-        model_name="t5-base",
+        model_name="facebook/bart-base",
         predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
         debug_status=args.debug_status,
         model_architecture="seq2seq",
