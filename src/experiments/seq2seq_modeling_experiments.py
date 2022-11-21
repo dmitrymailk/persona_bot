@@ -39,14 +39,14 @@ def experiment_1():
         max_epochs = 2
 
     lighting_hyperparameters = LightingHyperparametersV1(
-        precision=32,
+        precision=16,
         # accumulate_grad_batches=3,
         max_epochs=max_epochs,
     ).__dict__
 
     hyperparameters = PersonaChatHyperparametersV1(
         train_batch_size=16,
-        valid_batch_size=32,
+        valid_batch_size=16,
         # model_name="t5-small",
         model_name="facebook/blenderbot-400M-distill",
         predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
