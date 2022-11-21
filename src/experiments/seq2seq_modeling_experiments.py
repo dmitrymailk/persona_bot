@@ -25,10 +25,11 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 
 def experiment_1():
     """
-    - t5-small - ошибка nan (из-за fp16)
-    - t5-base - ошибка nan
+    - t5-small - ошибка nan (из-за fp16, устранена на fp32)
+    - t5-base - ошибка nan (устранена на fp32)
     - facebook/bart-base
     - google/t5-v1_1-small
+    - facebook/blenderbot-400M-distill
     """
     parser = ExperimentArgumentParserV1()
     args: TrainArgumentsV1 = parser.args
@@ -47,7 +48,7 @@ def experiment_1():
         train_batch_size=16,
         valid_batch_size=32,
         # model_name="t5-small",
-        model_name="t5-base",
+        model_name="facebook/blenderbot-400M-distill",
         predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
         debug_status=args.debug_status,
         model_architecture="seq2seq",
