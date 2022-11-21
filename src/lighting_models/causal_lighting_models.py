@@ -49,7 +49,7 @@ class LightingCausalModelV1(LightningModule):
         batch,
         batch_idx: int,
     ):
-        self.__create_database_logger()
+        self.create_database_logger()
 
         predicts = self.model(
             **batch,
@@ -66,7 +66,7 @@ class LightingCausalModelV1(LightningModule):
         batch,
         batch_idx: int,
     ):
-        self.__create_database_logger()
+        self.create_database_logger()
 
         predicts = self.model(
             input_ids=batch["input_ids"],
@@ -236,7 +236,7 @@ class LightingCausalModelV1(LightningModule):
             with open(f"{save_folder_path}/{epoch}.txt", "a") as f:
                 f.write(paired_texts)
 
-    def __create_database_logger(self):
+    def create_database_logger(self):
         if wandb.run is not None:
             self.database_logger = DatabaseLoggerV1(
                 wandb_run_id=wandb.run.id,

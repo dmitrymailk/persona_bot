@@ -78,15 +78,14 @@ class Seq2SeqTrainPersonaSampleV1(BaseDatasetSampleV1):
         encoded_task = flat_list(encoded_task["input_ids"])
 
         bos_token = []
-
-        if self.tokenizer.bos_token is not None:
-            bos_token = [self.tokenizer.bos_token_id]
+        if not "t5" in self.hyperparameters.model_name:
+            if self.tokenizer.bos_token is not None:
+                bos_token = [self.tokenizer.bos_token_id]
 
         input_ids = [
             *bos_token,
             *encoded_task,
             *encoded_persona,
-            self.tokenizer.sep_token_id,
             *encoded_history,
             self.tokenizer.eos_token_id,
         ]
@@ -147,14 +146,14 @@ class Seq2SeqValidPersonaSampleV1(Seq2SeqTrainPersonaSampleV1):
         encoded_task = flat_list(encoded_task["input_ids"])
 
         bos_token = []
-        if self.tokenizer.bos_token is not None:
-            bos_token = [self.tokenizer.bos_token_id]
+        if not "t5" in self.hyperparameters.model_name:
+            if self.tokenizer.bos_token is not None:
+                bos_token = [self.tokenizer.bos_token_id]
 
         input_ids = [
             *bos_token,
             *encoded_task,
             *encoded_persona,
-            self.tokenizer.sep_token_id,
             *encoded_history,
             self.tokenizer.eos_token_id,
         ]

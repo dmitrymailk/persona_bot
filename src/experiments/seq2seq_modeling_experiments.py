@@ -12,9 +12,9 @@ from src.hyperparameters.lighting import LightingHyperparametersV1
 from src.utils import (
     ExperimentArgumentParserV1,
     TrainArgumentsV1,
-    WandbLoggerV1,
     WandbLoggerV2,
 )
+from src.lighting_models.seq2seq_lighting_models import LightingSeq2SeqModelV1
 
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
@@ -86,7 +86,7 @@ def experiment_1():
 
     base_model = AutoModelForSeq2SeqLM.from_pretrained(hyperparameters.model_name)
 
-    model = LightingCausalModelV1(
+    model = LightingSeq2SeqModelV1(
         hyperparameters=hyperparameters,
         tokenizer=tokenizer,
         base_model=base_model,
