@@ -86,6 +86,7 @@ class Seq2SeqTrainPersonaSampleV1(BaseDatasetSampleV1):
             *bos_token,
             *encoded_task,
             *encoded_persona,
+            self.tokenizer.sep_token_id,
             *encoded_history,
             self.tokenizer.eos_token_id,
         ]
@@ -153,6 +154,7 @@ class Seq2SeqValidPersonaSampleV1(Seq2SeqTrainPersonaSampleV1):
             *bos_token,
             *encoded_task,
             *encoded_persona,
+            self.tokenizer.sep_token_id,
             *encoded_history,
             self.tokenizer.eos_token_id,
         ]
@@ -166,7 +168,7 @@ class Seq2SeqValidPersonaSampleV1(Seq2SeqTrainPersonaSampleV1):
 
         return Seq2SeqSampleDictV2(
             input_ids=input_ids,
-            labels=input_ids,
+            labels=labels,
             custom_labels=custom_labels,
             attention_mask=attention_mask,
             sample_id=sample_id,
