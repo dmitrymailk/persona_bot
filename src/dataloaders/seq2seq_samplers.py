@@ -70,6 +70,13 @@ class Seq2SeqTrainPersonaSampleV1(BaseDatasetSampleV1):
 
         encoded_labels = flat_list(encoded_labels["input_ids"])
 
+        encoded_task = self.tokenizer.batch_encode_plus(
+            ["chat:"],
+            add_special_tokens=False,
+            truncation=True,
+        )
+        encoded_chat = flat_list(encoded_task["input_ids"])
+
         bos_token = []
 
         if self.tokenizer.bos_token is not None:
@@ -77,6 +84,7 @@ class Seq2SeqTrainPersonaSampleV1(BaseDatasetSampleV1):
 
         input_ids = [
             *bos_token,
+            *encoded_chat,
             *encoded_persona,
             *encoded_history,
             self.tokenizer.eos_token_id,
@@ -130,12 +138,20 @@ class Seq2SeqValidPersonaSampleV1(Seq2SeqTrainPersonaSampleV1):
         )
         encoded_labels = flat_list(encoded_labels["input_ids"])
 
+        encoded_task = self.tokenizer.batch_encode_plus(
+            ["chat:"],
+            add_special_tokens=False,
+            truncation=True,
+        )
+        encoded_chat = flat_list(encoded_task["input_ids"])
+
         bos_token = []
         if self.tokenizer.bos_token is not None:
             bos_token = [self.tokenizer.bos_token_id]
 
         input_ids = [
             *bos_token,
+            *encoded_chat,
             *encoded_persona,
             *encoded_history,
             self.tokenizer.eos_token_id,
