@@ -44,9 +44,9 @@ def experiment_1():
 
     hyperparameters = PersonaChatHyperparametersV1(
         train_batch_size=16,
-        valid_batch_size=16,
-        # model_name="facebook/bart-base",
-        model_name="t5-base",
+        valid_batch_size=32,
+        model_name="facebook/bart-base",
+        # model_name="t5-base",
         predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
         debug_status=args.debug_status,
         model_architecture="seq2seq",
