@@ -53,6 +53,7 @@ class Seq2SeqTrainPersonaSampleV1(BaseDatasetSampleV1):
             truncation=True,
         )
         encoded_history = flat_list(encoded_history["input_ids"])
+        encoded_history = encoded_history[:128]
 
         encoded_persona = self.tokenizer.batch_encode_plus(
             persona,
@@ -61,6 +62,7 @@ class Seq2SeqTrainPersonaSampleV1(BaseDatasetSampleV1):
         )
 
         encoded_persona = flat_list(encoded_persona["input_ids"])
+        encoded_persona = encoded_persona[:128]
 
         encoded_labels = self.tokenizer.batch_encode_plus(
             [labels],
@@ -122,6 +124,7 @@ class Seq2SeqValidPersonaSampleV1(Seq2SeqTrainPersonaSampleV1):
             truncation=True,
         )
         encoded_history = flat_list(encoded_history["input_ids"])
+        encoded_history = encoded_history[:128]
 
         encoded_persona = self.tokenizer.batch_encode_plus(
             persona,
@@ -130,6 +133,7 @@ class Seq2SeqValidPersonaSampleV1(Seq2SeqTrainPersonaSampleV1):
         )
 
         encoded_persona = flat_list(encoded_persona["input_ids"])
+        encoded_persona = encoded_persona[:128]
 
         encoded_labels = self.tokenizer.batch_encode_plus(
             [labels],
