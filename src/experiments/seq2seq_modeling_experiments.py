@@ -32,7 +32,7 @@ def experiment_1():
     - facebook/blenderbot-400M-distill
     - google/long-t5-tglobal-base
     - google/bigbird-pegasus-large-arxiv - не помещается на карту
-    - allenai/longformer-base-4096
+    - allenai/led-base-16384
     """
     parser = ExperimentArgumentParserV1()
     args: TrainArgumentsV1 = parser.args
@@ -51,7 +51,7 @@ def experiment_1():
         train_batch_size=16,
         valid_batch_size=16,
         # model_name="t5-small",
-        model_name="allenai/longformer-base-4096",
+        model_name="allenai/led-base-16384",
         predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
         debug_status=args.debug_status,
         model_architecture="seq2seq",
