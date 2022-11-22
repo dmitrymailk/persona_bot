@@ -36,6 +36,7 @@ class DatabaseAnalyzerV1:
                 (ModelPredictionV1.prediction_id == random_row)
                 & (ModelPredictionV1.wandb_run_id == wandb_run_id)
             )
+            .order_by(ModelPredictionV1.id)
             .dicts()
         )
 
@@ -87,6 +88,7 @@ class DatabaseAnalyzerV1:
                     & (ModelPredictionV1.wandb_run_id == wandb_run_id)
                     & (ModelPredictionV1.prediction_id == random_row)
                 )
+                .order_by(ModelPredictionV1.id)
                 .dicts()
             )
 
@@ -95,3 +97,4 @@ class DatabaseAnalyzerV1:
 
         data = pd.concat(data)
         data[columns].to_csv(table_save_path, index=False)
+        return data[columns]

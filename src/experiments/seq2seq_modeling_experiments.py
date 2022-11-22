@@ -31,6 +31,7 @@ def experiment_1():
     - google/t5-v1_1-small
     - facebook/blenderbot-400M-distill
     - google/long-t5-tglobal-base
+    - google/bigbird-pegasus-large-arxiv
     """
     parser = ExperimentArgumentParserV1()
     args: TrainArgumentsV1 = parser.args
