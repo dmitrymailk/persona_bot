@@ -48,7 +48,7 @@ def experiment_1():
     ).__dict__
 
     hyperparameters = PersonaChatHyperparametersV1(
-        train_batch_size=16,
+        train_batch_size=8,
         valid_batch_size=16,
         # model_name="t5-small",
         model_name="allenai/led-base-16384",
