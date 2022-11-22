@@ -47,10 +47,10 @@ def experiment_1():
     ).__dict__
 
     hyperparameters = PersonaChatHyperparametersV1(
-        train_batch_size=8,
+        train_batch_size=16,
         valid_batch_size=32,
         # model_name="t5-small",
-        model_name="google/long-t5-tglobal-base",
+        model_name="google/bigbird-pegasus-large-arxiv",
         predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
         debug_status=args.debug_status,
         model_architecture="seq2seq",
