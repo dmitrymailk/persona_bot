@@ -30,6 +30,7 @@ def experiment_1():
     - facebook/bart-base
     - google/t5-v1_1-small
     - facebook/blenderbot-400M-distill
+    - google/long-t5-tglobal-base
     """
     parser = ExperimentArgumentParserV1()
     args: TrainArgumentsV1 = parser.args
@@ -46,9 +47,9 @@ def experiment_1():
 
     hyperparameters = PersonaChatHyperparametersV1(
         train_batch_size=16,
-        valid_batch_size=16,
+        valid_batch_size=32,
         # model_name="t5-small",
-        model_name="facebook/blenderbot-400M-distill",
+        model_name="google/long-t5-tglobal-base",
         predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
         debug_status=args.debug_status,
         model_architecture="seq2seq",
