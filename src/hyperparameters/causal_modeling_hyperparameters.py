@@ -56,7 +56,7 @@ class H2PersonaChatHyperparametersV1(BaseHyperparametersV1):
     max_tokens_length: int = 359
     model_name: str = "gpt2"
     model_architecture: str = "causal"
-    max_response_length: int = 128
+    max_response_length: int = 512
     project_name: str = "persona_bot"
     predicted_texts_folder: str = (
         "/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts"
