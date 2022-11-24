@@ -3,7 +3,7 @@ from typing import Optional
 
 
 @dataclass
-class LightingHyperparametersV1:
+class H1LightingHyperparametersV1:
     precision: int | str = 32
     accumulate_grad_batches: int = 1
     gradient_clip_val: float = 1.0

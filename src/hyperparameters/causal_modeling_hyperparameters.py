@@ -18,7 +18,7 @@ class BaseHyperparametersV1:
 
 
 @dataclass
-class PersonaChatHyperparametersV1(BaseHyperparametersV1):
+class H1PersonaChatHyperparametersV1(BaseHyperparametersV1):
     """
     chat_history_pair_length: int - количество пар диалога с конца
     max_tokens_length: int - максимальная длина последовательности

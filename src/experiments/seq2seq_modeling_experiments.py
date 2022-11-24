@@ -5,10 +5,10 @@ from src.dataloaders.seq2seq_samplers import (
 )
 from src.dataloaders.lighting import LightningDataModuleV1
 from src.hyperparameters.causal_modeling_hyperparameters import (
-    PersonaChatHyperparametersV1,
+    H1PersonaChatHyperparametersV1,
 )
 from src.lighting_models.causal_lighting_models import LightingCausalModelV1
-from src.hyperparameters.lighting import LightingHyperparametersV1
+from src.hyperparameters.lighting import H1LightingHyperparametersV1
 from src.utils import (
     ExperimentArgumentParserV1,
     TrainArgumentsV1,
@@ -41,13 +41,13 @@ def experiment_1():
     if args.debug_status == 1:
         max_epochs = 2
 
-    lighting_hyperparameters = LightingHyperparametersV1(
+    lighting_hyperparameters = H1LightingHyperparametersV1(
         precision=16,
         # accumulate_grad_batches=3,
         max_epochs=max_epochs,
     ).__dict__
 
-    hyperparameters = PersonaChatHyperparametersV1(
+    hyperparameters = H1PersonaChatHyperparametersV1(
         train_batch_size=8,
         valid_batch_size=16,
         # model_name="t5-small",

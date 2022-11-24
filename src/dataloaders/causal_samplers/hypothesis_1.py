@@ -1,7 +1,7 @@
 from typing import Dict, TypedDict, List
 
 from src.hyperparameters.causal_modeling_hyperparameters import (
-    PersonaChatHyperparametersV1,
+    H1PersonaChatHyperparametersV1,
 )
 from src.dataloaders.persona_chat_dataloaders import PersonaChatDatasetSampleV1
 from src.utils import flat_list
@@ -17,13 +17,13 @@ class BaseDatasetSampleV1:
         raise NotImplementedError
 
 
-class CausalSampleDictV1(TypedDict):
+class H1CausalSampleDictV1(TypedDict):
     input_ids: List[int]
     labels: List[int]
     attention_mask: List[int]
 
 
-class CausalSampleDictV2(TypedDict):
+class H1CausalSampleDictV2(TypedDict):
     input_ids: List[int]
     labels: List[int]
     attention_mask: List[int]
@@ -32,8 +32,9 @@ class CausalSampleDictV2(TypedDict):
     persona: str
 
 
-class CausalTrainPersonaSampleV1(BaseDatasetSampleV1):
+class H1CausalTrainPersonaSampleV1(BaseDatasetSampleV1):
     """
+    hypothesis_1.
     не сдвигаем labels и не укорачиваем input_ids
     """
 
@@ -41,13 +42,13 @@ class CausalTrainPersonaSampleV1(BaseDatasetSampleV1):
         self,
         dataset_sample: PersonaChatDatasetSampleV1,
         tokenizer: AutoTokenizer,
-        hyperparameters: PersonaChatHyperparametersV1,
+        hyperparameters: H1PersonaChatHyperparametersV1,
     ) -> None:
         self.dataset_sample = dataset_sample
         self.tokenizer = tokenizer
         self.hyperparameters = hyperparameters
 
-    def get_sample(self) -> CausalSampleDictV1:
+    def get_sample(self) -> H1CausalSampleDictV1:
         history = self.dataset_sample["history"]
         history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
         persona = self.dataset_sample["persona"]
@@ -75,19 +76,20 @@ class CausalTrainPersonaSampleV1(BaseDatasetSampleV1):
         ]
         attention_mask = [1] * len(input_ids)
 
-        return CausalSampleDictV1(
+        return H1CausalSampleDictV1(
             input_ids=input_ids,
             labels=input_ids,
             attention_mask=attention_mask,
         )
 
 
-class CausalValidPersonaSampleV1(CausalTrainPersonaSampleV1):
+class H1CausalValidPersonaSampleV1(H1CausalTrainPersonaSampleV1):
     """
+    hypothesis_1.
     не сдвигаем labels и не укорачиваем input_ids
     """
 
-    def get_sample(self) -> CausalSampleDictV1:
+    def get_sample(self) -> H1CausalSampleDictV1:
         history = self.dataset_sample["history"]
         history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
         labels = history.pop()
@@ -129,7 +131,7 @@ class CausalValidPersonaSampleV1(CausalTrainPersonaSampleV1):
             self.tokenizer.eos_token_id,
         ]
 
-        return CausalSampleDictV2(
+        return H1CausalSampleDictV2(
             input_ids=input_ids,
             labels=input_ids,
             custom_labels=custom_labels,
@@ -139,8 +141,9 @@ class CausalValidPersonaSampleV1(CausalTrainPersonaSampleV1):
         )
 
 
-class CausalTrainPersonaSampleV2(BaseDatasetSampleV1):
+class H1CausalTrainPersonaSampleV2(BaseDatasetSampleV1):
     """
+    hypothesis_1.
     сдвигаем labels и укорачиваем input_ids
     """
 
@@ -148,13 +151,13 @@ class CausalTrainPersonaSampleV2(BaseDatasetSampleV1):
         self,
         dataset_sample: PersonaChatDatasetSampleV1,
         tokenizer: AutoTokenizer,
-        hyperparameters: PersonaChatHyperparametersV1,
+        hyperparameters: H1PersonaChatHyperparametersV1,
     ) -> None:
         self.dataset_sample = dataset_sample
         self.tokenizer = tokenizer
         self.hyperparameters = hyperparameters
 
-    def get_sample(self) -> CausalSampleDictV1:
+    def get_sample(self) -> H1CausalSampleDictV1:
         history = self.dataset_sample["history"]
         history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
         persona = self.dataset_sample["persona"]
@@ -185,19 +188,20 @@ class CausalTrainPersonaSampleV2(BaseDatasetSampleV1):
         input_ids = input_ids[:-1]
         attention_mask = [1] * len(input_ids)
 
-        return CausalSampleDictV1(
+        return H1CausalSampleDictV1(
             input_ids=input_ids,
             labels=labels,
             attention_mask=attention_mask,
         )
 
 
-class CausalValidPersonaSampleV2(CausalTrainPersonaSampleV1):
+class H1CausalValidPersonaSampleV2(H1CausalTrainPersonaSampleV1):
     """
+    hypothesis_1.
     сдвигаем labels и укорачиваем input_ids
     """
 
-    def get_sample(self) -> CausalSampleDictV1:
+    def get_sample(self) -> H1CausalSampleDictV1:
         history = self.dataset_sample["history"]
         history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
         labels = history.pop()
@@ -242,7 +246,7 @@ class CausalValidPersonaSampleV2(CausalTrainPersonaSampleV1):
             self.tokenizer.eos_token_id,
         ]
 
-        return CausalSampleDictV2(
+        return H1CausalSampleDictV2(
             input_ids=input_ids,
             labels=labels,
             custom_labels=custom_labels,

@@ -1,16 +1,16 @@
 from src.dataloaders.persona_chat_dataloaders import PersonaChatDatasetV1
-from src.dataloaders.causal_samplers import (
-    CausalTrainPersonaSampleV1,
-    CausalValidPersonaSampleV1,
-    CausalTrainPersonaSampleV2,
-    CausalValidPersonaSampleV2,
+from src.dataloaders.causal_samplers.hypothesis_1 import (
+    H1CausalTrainPersonaSampleV1,
+    H1CausalValidPersonaSampleV1,
+    H1CausalTrainPersonaSampleV2,
+    H1CausalValidPersonaSampleV2,
 )
 from src.dataloaders.lighting import LightningDataModuleV1
 from src.hyperparameters.causal_modeling_hyperparameters import (
-    PersonaChatHyperparametersV1,
+    H1PersonaChatHyperparametersV1,
 )
 from src.lighting_models.causal_lighting_models import LightingCausalModelV1
-from src.hyperparameters.lighting import LightingHyperparametersV1
+from src.hyperparameters.lighting import H1LightingHyperparametersV1
 from src.utils import (
     ExperimentArgumentParserV1,
     TrainArgumentsV1,
@@ -25,7 +25,7 @@ from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
 
 
-def experiment_1():
+def h1_experiment_1():
     """
     модели у которых сдвиг токенов происходит внутри модели
     - gpt2
@@ -40,13 +40,13 @@ def experiment_1():
     if args.debug_status == 1:
         max_epochs = 2
 
-    lighting_hyperparameters = LightingHyperparametersV1(
+    lighting_hyperparameters = H1LightingHyperparametersV1(
         precision=16,
         # accumulate_grad_batches=3,
         max_epochs=max_epochs,
     ).__dict__
 
-    hyperparameters = PersonaChatHyperparametersV1(
+    hyperparameters = H1PersonaChatHyperparametersV1(
         train_batch_size=8 * 2,
         valid_batch_size=16,
         model_name="gpt2",
@@ -82,8 +82,8 @@ def experiment_1():
         tokenizer=tokenizer,
         base_train_dataset_class=PersonaChatDatasetV1,
         base_valid_dataset_class=PersonaChatDatasetV1,
-        base_train_sample_class=CausalTrainPersonaSampleV1,
-        base_valid_sample_class=CausalValidPersonaSampleV1,
+        base_train_sample_class=H1CausalTrainPersonaSampleV1,
+        base_valid_sample_class=H1CausalValidPersonaSampleV1,
         debug_status=args.debug_status,
         device=device,
     )
@@ -119,7 +119,7 @@ def experiment_1():
     )
 
 
-def experiment_2():
+def h1_experiment_2():
     """
     модели у которых сдвиг токенов не происходит внутри модели
     небходимо самому сдвигать токены и подавать их в модель
@@ -137,13 +137,13 @@ def experiment_2():
     if args.debug_status == 1:
         max_epochs = 1
 
-    lighting_hyperparameters = LightingHyperparametersV1(
+    lighting_hyperparameters = H1LightingHyperparametersV1(
         precision=16,
         # accumulate_grad_batches=3,
         max_epochs=max_epochs,
     ).__dict__
 
-    hyperparameters = PersonaChatHyperparametersV1(
+    hyperparameters = H1PersonaChatHyperparametersV1(
         train_batch_size=8,
         valid_batch_size=16,
         model_name="RUCAIBox/mvp",
@@ -161,8 +161,8 @@ def experiment_2():
         tokenizer=tokenizer,
         base_train_dataset_class=PersonaChatDatasetV1,
         base_valid_dataset_class=PersonaChatDatasetV1,
-        base_train_sample_class=CausalTrainPersonaSampleV2,
-        base_valid_sample_class=CausalValidPersonaSampleV2,
+        base_train_sample_class=H1CausalTrainPersonaSampleV2,
+        base_valid_sample_class=H1CausalValidPersonaSampleV2,
         debug_status=args.debug_status,
     )
 

@@ -2,7 +2,7 @@ import os
 from typing import List
 
 from src.hyperparameters.causal_modeling_hyperparameters import (
-    PersonaChatHyperparametersV1,
+    H1PersonaChatHyperparametersV1,
 )
 from src.utils import TextEvaluator
 from src.database_logger.logger import DatabaseLoggerV1
@@ -20,7 +20,7 @@ import wandb
 class LightingCausalModelV1(LightningModule):
     def __init__(
         self,
-        hyperparameters: PersonaChatHyperparametersV1,
+        hyperparameters: H1PersonaChatHyperparametersV1,
         tokenizer: AutoTokenizer,
         base_model: AutoModelForCausalLM,
     ) -> None:
