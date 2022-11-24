@@ -67,6 +67,7 @@ class H2PersonaChatHyperparametersV1(BaseHyperparametersV1):
     persona_sep_token: str = "<p_sep>"
     chat_token: str = "<chat>"
     persona_token: str = "<persona>"
+    responce_token: str = "<responce>"
 
     persona_max_length: int = 14
     chat_max_length: int = 19

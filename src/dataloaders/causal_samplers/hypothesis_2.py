@@ -52,17 +52,44 @@ class H2CausalTrainPersonaSampleV1(BaseDatasetSampleV1):
         self.c_sep_id = self.tokenizer.encode(self.hyperparameters.chat_sep_token)[0]
         self.persona_id = self.tokenizer.encode(self.hyperparameters.persona_token)[0]
         self.chat_id = self.tokenizer.encode(self.hyperparameters.chat_token)[0]
+        self.response_id = self.tokenizer.encode(self.hyperparameters.responce_token)[0]
 
-    def _add_sep_token(
+    def _add_sep_token_persona(
         self,
         input_ids: List[List[int]],
-        sep_token_id: int,
     ) -> List[int]:
         result = []
         for pos, item in enumerate(input_ids):
             result.extend(item)
             if pos != len(input_ids) - 1:
-                result.append(sep_token_id)
+                result.append(self.p_sep_id)
+
+        return result
+
+    def _add_sep_token_chat_valid(
+        self,
+        input_ids: List[List[int]],
+    ) -> List[int]:
+        result = []
+        for pos, item in enumerate(input_ids):
+            result.extend(item)
+            if pos < len(input_ids) - 1:
+                result.append(self.c_sep_id)
+            else:
+                result.append(self.response_id)
+        return result
+
+    def _add_sep_token_chat_train(
+        self,
+        input_ids: List[List[int]],
+    ) -> List[int]:
+        result = []
+        for pos, item in enumerate(input_ids):
+            result.extend(item)
+            if pos < len(input_ids) - 2:
+                result.append(self.c_sep_id)
+            if pos == len(input_ids) - 2:
+                result.append(self.response_id)
 
         return result
 
@@ -78,9 +105,8 @@ class H2CausalTrainPersonaSampleV1(BaseDatasetSampleV1):
             max_length=self.hyperparameters.persona_max_length,
         )
 
-        encoded_persona = self._add_sep_token(
+        encoded_persona = self._add_sep_token_persona(
             input_ids=encoded_persona["input_ids"],
-            sep_token_id=self.p_sep_id,
         )
 
         encoded_history = self.tokenizer.batch_encode_plus(
@@ -89,9 +115,8 @@ class H2CausalTrainPersonaSampleV1(BaseDatasetSampleV1):
             truncation=True,
             max_length=self.hyperparameters.chat_max_length,
         )
-        encoded_history = self._add_sep_token(
+        encoded_history = self._add_sep_token_chat_train(
             input_ids=encoded_history["input_ids"],
-            sep_token_id=self.c_sep_id,
         )
 
         input_ids = [
@@ -147,9 +172,8 @@ class H2CausalValidPersonaSampleV1(H2CausalTrainPersonaSampleV1):
             max_length=self.hyperparameters.persona_max_length,
         )
 
-        encoded_persona = self._add_sep_token(
+        encoded_persona = self._add_sep_token_persona(
             input_ids=encoded_persona["input_ids"],
-            sep_token_id=self.p_sep_id,
         )
 
         encoded_history = self.tokenizer.batch_encode_plus(
@@ -158,9 +182,8 @@ class H2CausalValidPersonaSampleV1(H2CausalTrainPersonaSampleV1):
             truncation=True,
             max_length=self.hyperparameters.chat_max_length,
         )
-        encoded_history = self._add_sep_token(
+        encoded_history = self._add_sep_token_chat_valid(
             input_ids=encoded_history["input_ids"],
-            sep_token_id=self.c_sep_id,
         )
 
         encoded_labels = self.tokenizer.batch_encode_plus(
@@ -178,7 +201,6 @@ class H2CausalValidPersonaSampleV1(H2CausalTrainPersonaSampleV1):
             *encoded_persona,
             self.chat_id,
             *encoded_history,
-            self.c_sep_id,
             # self.tokenizer.eos_token_id,
         ]
         attention_mask = [1] * len(input_ids)

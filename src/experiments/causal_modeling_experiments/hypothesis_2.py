@@ -57,6 +57,7 @@ def h2_experiment_1():
         "<p_sep>",
         "<chat>",
         "<persona>",
+        "<responce>",
     ]
     tokenizer.add_tokens(
         special_tokens,

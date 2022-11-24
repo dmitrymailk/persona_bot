@@ -54,7 +54,6 @@ class LightingCausalModelV1(LightningModule):
         predicts = self.model(
             **batch,
         )
-
         loss = predicts.loss
 
         self.log("train_loss", loss)
