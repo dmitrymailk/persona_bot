@@ -44,7 +44,7 @@ def h2_experiment_1():
     ).__dict__
 
     hyperparameters = H2PersonaChatHyperparametersV1(
-        train_batch_size=8 * 2,
+        train_batch_size=8,
         valid_batch_size=16,
         model_name="gpt2",
         predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
