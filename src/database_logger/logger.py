@@ -8,7 +8,12 @@ class DatabaseLoggerV1:
         self,
         wandb_run_id: str,
         hyperparameters: BaseHyperparametersV1,
+        host: str,
+        port: int,
     ):
+        self.host = host
+        self.port = port
+
         self.__test_connection()
         self.hyperparameters = hyperparameters
         self.model_name = hyperparameters.model_name
@@ -20,8 +25,8 @@ class DatabaseLoggerV1:
             "nlp_database",
             user="postgres",
             password="postgres",
-            host="0.0.0.0",
-            port=2345,
+            host=self.host,
+            port=self.port,
             autorollback=True,
         )
         db.connect()
@@ -71,7 +76,13 @@ class DatabaseLoggerV1:
 
 
 class DatabaseAnalaizerV1:
-    def __init__(self):
+    def __init__(
+        self,
+        host: str,
+        port: int,
+    ):
+        self.host = host
+        self.port = port
         self.db = None
         self.__connect_database()
 
@@ -80,8 +91,8 @@ class DatabaseAnalaizerV1:
             "nlp_database",
             user="postgres",
             password="postgres",
-            host="0.0.0.0",
-            port=2345,
+            host=self.host,
+            port=self.port,
             autorollback=True,
         )
         db.connect()

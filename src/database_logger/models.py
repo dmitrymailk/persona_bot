@@ -7,7 +7,7 @@ class BaseModel(pw.Model):
             "nlp_database",
             user="postgres",
             password="postgres",
-            host="0.0.0.0",
+            host="195.14.48.196",
             port=2345,
             autorollback=True,
         )

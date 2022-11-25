@@ -74,6 +74,14 @@ class ExperimentArgumentParserV1:
                     "default": 0,
                 },
             ),
+            (
+                "--cuda_device",
+                {
+                    "dest": "debug_status",
+                    "type": int,
+                    "default": 0,
+                },
+            ),
         ]
 
         for name, param in params:

@@ -2,11 +2,19 @@ import peewee as pw
 import pandas as pd
 from src.database_logger.models import ModelPredictionV1, ModelMetricsV1
 from src.database_logger.logger import DatabaseAnalaizerV1
+from typing import List
 
 
 class DatabaseAnalyzerV1:
-    def __init__(self):
-        self.db = DatabaseAnalaizerV1()
+    def __init__(
+        self,
+        host: str,
+        port: int,
+    ):
+        self.db = DatabaseAnalaizerV1(
+            host=host,
+            port=port,
+        )
         self.get_random_row = """
         WITH random_row AS (
             SELECT * FROM model_prediction_v1 ORDER BY random() LIMIT 1
@@ -18,7 +26,7 @@ class DatabaseAnalyzerV1:
         self,
         wandb_run_id: str,
         table_save_path: str = "./temp.csv",
-        columns: list[str] = [
+        columns: List[str] = [
             "wandb_run_id",
             "model_name",
             "epoch",
@@ -47,7 +55,7 @@ class DatabaseAnalyzerV1:
         self,
         wandb_run_id: str,
         table_save_path: str = "./temp.csv",
-        columns: list[str] = [
+        columns: List[str] = [
             "wandb_run_id",
             "model_name",
             "prediction_id",

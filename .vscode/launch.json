@@ -13,7 +13,9 @@
 			"justMyCode": true,
 			"args": [
 				"--debug_status",
-				"1"
+				"1",
+				"--cuda_device",
+				"5"
 			]
 		}
 	]

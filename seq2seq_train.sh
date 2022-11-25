@@ -1,3 +1,6 @@
+CUDA_DEVICE_ORDER=PCI_BUS_ID
+CUDA_VISIBLE_DEVICES=1,2,3,4
+
 training_script=src.train_scripts.seq2seq_training
 
 train_status=0

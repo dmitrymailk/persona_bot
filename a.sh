@@ -1,1 +1,1 @@
-source /home/kosenko/persona_bot/env/bin/activate
+source /home/kosenko/env/bin/activate
