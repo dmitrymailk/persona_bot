@@ -1,3 +1,5 @@
+import os
+
 from src.dataloaders.persona_chat_dataloaders import PersonaChatDatasetV1
 from src.dataloaders.causal_samplers.hypothesis_2 import (
     H2CausalTrainPersonaSampleV1,
@@ -30,6 +32,10 @@ def h2_experiment_1():
     - RUCAIBox/mvp - не работает
     - roberta-base - не работает
     """
+    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+    cuda_devices = ",".join(open("./cuda_devices", "r").read().split(" "))
+    os.environ["CUDA_VISIBLE_DEVICES"] = cuda_devices
+
     parser = ExperimentArgumentParserV1()
     args: TrainArgumentsV1 = parser.args
 
@@ -48,7 +54,7 @@ def h2_experiment_1():
         train_batch_size=4,
         valid_batch_size=16,
         model_name="microsoft/DialoGPT-medium",
-        predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
+        predicted_texts_folder="./predicted_texts",
         debug_status=args.debug_status,
     )
 
@@ -69,7 +75,8 @@ def h2_experiment_1():
 
     accelerator = "gpu"
     if args.debug_status == 1:
-        accelerator = "cpu"
+        # accelerator = "cpu"
+        accelerator = "gpu"
 
     device = "cuda" if accelerator == "gpu" else "cpu"
 

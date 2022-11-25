@@ -15,7 +15,7 @@
 				"--debug_status",
 				"1",
 				"--cuda_device",
-				"5"
+				"1",
 			]
 		}
 	]

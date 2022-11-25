@@ -58,9 +58,7 @@ class H2PersonaChatHyperparametersV1(BaseHyperparametersV1):
     model_architecture: str = "causal"
     max_response_length: int = 512
     project_name: str = "persona_bot"
-    predicted_texts_folder: str = (
-        "/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts"
-    )
+    predicted_texts_folder: str = "./predicted_texts"
     debug_status: int = 0
 
     chat_sep_token: str = "<c_sep>"
@@ -71,3 +69,6 @@ class H2PersonaChatHyperparametersV1(BaseHyperparametersV1):
 
     persona_max_length: int = 14
     chat_max_length: int = 19
+
+    host: str = "195.14.48.196"
+    port: int = 2345

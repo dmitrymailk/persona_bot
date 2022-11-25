@@ -11,13 +11,13 @@ class AbstractInitialDataset(ABC):
         pass
 
     @abstractmethod
-    def _read_dataset(self, input_path: str) -> Dict | List[Dict]:
+    def _read_dataset(self, input_path: str) -> Dict:
         pass
 
     @abstractmethod
     def _create_initial_dataset(
         self,
-        initial_dataset: List[Dict] | Dict,
+        initial_dataset: List[Dict],
     ) -> List[Any]:
         pass
 

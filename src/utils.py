@@ -78,7 +78,7 @@ class ExperimentArgumentParserV1:
             (
                 "--cuda_device",
                 {
-                    "dest": "debug_status",
+                    "dest": "cuda_device",
                     "type": int,
                     "default": 0,
                 },

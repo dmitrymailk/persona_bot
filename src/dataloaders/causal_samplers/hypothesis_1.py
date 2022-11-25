@@ -1,4 +1,4 @@
-from typing import Dict, TypedDict, List
+from typing import Dict, TypedDict, List, Union
 
 from src.hyperparameters.causal_modeling_hyperparameters import (
     H1PersonaChatHyperparametersV1,
@@ -13,7 +13,7 @@ class BaseDatasetSampleV1:
     def __init__(self) -> None:
         raise NotImplementedError
 
-    def get_sample(self) -> Dict | TypedDict:
+    def get_sample(self) -> Union[Dict, TypedDict]:
         raise NotImplementedError
 
 
