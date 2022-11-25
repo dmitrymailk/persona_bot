@@ -46,7 +46,7 @@ def h2_experiment_1():
     hyperparameters = H2PersonaChatHyperparametersV1(
         train_batch_size=8,
         valid_batch_size=16,
-        model_name="gpt2",
+        model_name="microsoft/DialoGPT-medium",
         predicted_texts_folder="/home/dimweb/Desktop/deeppavlov/persona_bot/predicted_texts",
         debug_status=args.debug_status,
     )
