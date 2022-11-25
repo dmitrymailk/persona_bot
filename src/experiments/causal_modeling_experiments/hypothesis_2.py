@@ -56,6 +56,7 @@ def h2_experiment_1():
         model_name="microsoft/DialoGPT-medium",
         predicted_texts_folder="./predicted_texts",
         debug_status=args.debug_status,
+        chat_history_pair_length=3,
     )
 
     tokenizer = AutoTokenizer.from_pretrained(hyperparameters.model_name)
