@@ -15,7 +15,7 @@ from itertools import chain
 from pytorch_lightning.loggers import WandbLogger
 
 
-def flat_list(list_of_lists: List[List] | List) -> List:
+def flat_list(list_of_lists: List[List]) -> List:
     return list(chain.from_iterable(list_of_lists))
 
 
@@ -58,6 +58,7 @@ class TextEvaluator:
 @dataclass
 class TrainArgumentsV1:
     debug_status: int
+    cuda_device: int
 
 
 class ExperimentArgumentParserV1:
@@ -92,6 +93,8 @@ class ExperimentArgumentParserV1:
         args = {arg[0]: arg[1] for arg in args}
 
         args = TrainArgumentsV1(**args)
+        cuda_devices = [int(item) for item in open("./cuda_devices").read().split(" ")]
+        assert args.cuda_device in cuda_devices
 
         self.args = args
 

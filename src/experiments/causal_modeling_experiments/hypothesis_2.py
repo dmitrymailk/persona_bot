@@ -41,6 +41,7 @@ def h2_experiment_1():
         precision=16,
         # accumulate_grad_batches=3,
         max_epochs=max_epochs,
+        devices=[args.cuda_device],
     ).__dict__
 
     hyperparameters = H2PersonaChatHyperparametersV1(
