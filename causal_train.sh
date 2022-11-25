@@ -34,7 +34,7 @@ train() {
 }
 
 # clear dir
-rm -rf ./training_logs/causal_model/*
+# rm -rf ./training_logs/causal_model/*
 
 echo Your cuda device is $cuda_device
 if [ $cuda_device -eq -1 ]; then
