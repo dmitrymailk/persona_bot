@@ -13,7 +13,7 @@ CausalLM:
 ```text
 Seq2Seq:
 входная последовательность:
-<persona> persona_fact[0]<p_sep>persona_fact[1]<p_sep>persona_fact[2]<p_sep>persona_fact[3]<p_sep>persona_fact[4]<p_sep> <chat> реплика[-6]<с_sep>реплика[-5]<с_sep>реплика[-4]<с_sep>реплика[-3]<с_sep>реплика[-2]<response>реплика[-1]<eos_token>
+<persona> persona_fact[0]<p_sep>persona_fact[1]<p_sep>persona_fact[2]<p_sep>persona_fact[3]<p_sep>persona_fact[4]<p_sep> <chat> реплика[-6]<с_sep>реплика[-5]<с_sep>реплика[-4]<с_sep>реплика[-3]<с_sep>реплика[-2]<response>
 таргет: реплика[-1]
 
 CausalLM:
