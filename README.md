@@ -1,3 +1,6 @@
+### Dataset
+- [original_dataset](https://s3.amazonaws.com/datasets.huggingface.co/personachat/personachat_self_original.json)
+
 #### hypothesis 1
 ```text
 использовал CausalLM и Seq2Seq. Seq2Seq показал себя лучше.

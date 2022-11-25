@@ -1,0 +1,2 @@
+mkdir datasets predicted_texts
+mkdir training_logs/causal_model training_logs/seq2seq_model

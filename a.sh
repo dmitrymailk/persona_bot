@@ -1,0 +1,1 @@
+source /home/kosenko/persona_bot/env/bin/activate
