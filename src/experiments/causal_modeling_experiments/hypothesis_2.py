@@ -120,10 +120,9 @@ def h2_experiment_1():
 
     checkpoint_callback = ModelCheckpoint(
         save_top_k=1,
-        monitor="valid_loss_epoch",
-        mode="min",
-        filename=f"{hyperparameters.model_name}"
-        + "-{epoch:02d}-{valid_loss_epoch:.2f}",
+        monitor="epoch",
+        mode="max",
+        filename=f"{hyperparameters.model_name}" + "-{epoch:02d}-{epoch:.2f}",
     )
 
     trainer = Trainer(
