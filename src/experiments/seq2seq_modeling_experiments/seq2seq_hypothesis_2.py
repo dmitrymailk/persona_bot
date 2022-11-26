@@ -55,8 +55,8 @@ def h2_experiment_1():
     hyperparameters = H2PersonaChatHyperparametersV1(
         train_batch_size=8,
         valid_batch_size=16,
-        # model_name="t5-small",
-        model_name="facebook/bart-base",
+        model_name="t5-small",
+        # model_name="facebook/bart-base",
         model_architecture="seq2seq",
         predicted_texts_folder="./predicted_texts",
         debug_status=args.debug_status,
@@ -64,6 +64,7 @@ def h2_experiment_1():
     )
 
     deterministic = True
+    # fix cumsum error
     if hyperparameters.model_name in ["google/long-t5-tglobal-base"]:
         deterministic = False
 
