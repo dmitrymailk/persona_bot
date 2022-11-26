@@ -1,7 +1,7 @@
 import os
 
 from src.dataloaders.persona_chat_dataloaders import PersonaChatDatasetV1
-from src.dataloaders.causal_samplers.hypothesis_2 import (
+from src.dataloaders.causal_samplers.causal_samplers_hypothesis_2 import (
     H2CausalTrainPersonaSampleV1,
     H2CausalValidPersonaSampleV1,
 )

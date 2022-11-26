@@ -4,7 +4,7 @@ from src.hyperparameters.causal_modeling_hyperparameters import (
     H2PersonaChatHyperparametersV1,
 )
 from src.dataloaders.persona_chat_dataloaders import PersonaChatDatasetSampleV1
-from src.dataloaders.causal_samplers.hypothesis_1 import (
+from src.dataloaders.causal_samplers.causal_samplers_hypothesis_1 import (
     BaseDatasetSampleV1,
     H1CausalSampleDictV1,
     H1CausalSampleDictV2,
@@ -48,11 +48,14 @@ class H2CausalTrainPersonaSampleV1(BaseDatasetSampleV1):
         self.tokenizer = tokenizer
         self.hyperparameters = hyperparameters
 
-        self.p_sep_id = self.tokenizer.encode(self.hyperparameters.persona_sep_token)[0]
-        self.c_sep_id = self.tokenizer.encode(self.hyperparameters.chat_sep_token)[0]
-        self.persona_id = self.tokenizer.encode(self.hyperparameters.persona_token)[0]
-        self.chat_id = self.tokenizer.encode(self.hyperparameters.chat_token)[0]
-        self.response_id = self.tokenizer.encode(self.hyperparameters.responce_token)[0]
+        self.p_sep_id = self._get_token_id(self.hyperparameters.persona_sep_token)
+        self.c_sep_id = self._get_token_id(self.hyperparameters.chat_sep_token)
+        self.persona_id = self._get_token_id(self.hyperparameters.persona_token)
+        self.chat_id = self._get_token_id(self.hyperparameters.chat_token)
+        self.response_id = self._get_token_id(self.hyperparameters.responce_token)
+
+    def _get_token_id(self, text: str) -> int:
+        return self.tokenizer.encode(text, add_special_tokens=False)[0]
 
     def _add_sep_token_persona(
         self,

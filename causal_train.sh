@@ -1,6 +1,3 @@
-CUDA_DEVICE_ORDER=PCI_BUS_ID
-CUDA_VISIBLE_DEVICES=5,6,7,8
-
 training_script=src.train_scripts.causal_training
 
 train_status=0

@@ -5,18 +5,20 @@ from src.hyperparameters.causal_modeling_hyperparameters import (
 )
 from src.dataloaders.persona_chat_dataloaders import PersonaChatDatasetSampleV1
 from src.utils import flat_list
-from src.dataloaders.causal_samplers import BaseDatasetSampleV1
+from src.dataloaders.causal_samplers.causal_samplers_hypothesis_1 import (
+    BaseDatasetSampleV1,
+)
 
 from transformers import AutoTokenizer
 
 
-class Seq2SeqSampleDictV1(TypedDict):
+class H1Seq2SeqSampleDictV1(TypedDict):
     input_ids: List[int]
     labels: List[int]
     attention_mask: List[int]
 
 
-class Seq2SeqSampleDictV2(TypedDict):
+class H1Seq2SeqSampleDictV2(TypedDict):
     input_ids: List[int]
     labels: List[int]
     attention_mask: List[int]
@@ -25,7 +27,7 @@ class Seq2SeqSampleDictV2(TypedDict):
     persona: str
 
 
-class Seq2SeqTrainPersonaSampleV1(BaseDatasetSampleV1):
+class H1Seq2SeqTrainPersonaSampleV1(BaseDatasetSampleV1):
     """
     input_ids: all persona + history + eos
     labels: user response + eos
@@ -41,7 +43,7 @@ class Seq2SeqTrainPersonaSampleV1(BaseDatasetSampleV1):
         self.tokenizer = tokenizer
         self.hyperparameters = hyperparameters
 
-    def get_sample(self) -> Seq2SeqSampleDictV1:
+    def get_sample(self) -> H1Seq2SeqSampleDictV1:
         history = self.dataset_sample["history"]
         history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
         labels = history.pop()
@@ -98,20 +100,20 @@ class Seq2SeqTrainPersonaSampleV1(BaseDatasetSampleV1):
         ]
         attention_mask = [1] * len(input_ids)
 
-        return Seq2SeqSampleDictV1(
+        return H1Seq2SeqSampleDictV1(
             input_ids=input_ids,
             labels=labels,
             attention_mask=attention_mask,
         )
 
 
-class Seq2SeqValidPersonaSampleV1(Seq2SeqTrainPersonaSampleV1):
+class H1Seq2SeqValidPersonaSampleV1(H1Seq2SeqTrainPersonaSampleV1):
     """
     input_ids: all persona + history + eos
     labels: user response + eos
     """
 
-    def get_sample(self) -> Seq2SeqSampleDictV2:
+    def get_sample(self) -> H1Seq2SeqSampleDictV2:
         history = self.dataset_sample["history"]
         history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
         labels = history.pop()
@@ -169,7 +171,7 @@ class Seq2SeqValidPersonaSampleV1(Seq2SeqTrainPersonaSampleV1):
         ]
         labels = custom_labels
 
-        return Seq2SeqSampleDictV2(
+        return H1Seq2SeqSampleDictV2(
             input_ids=input_ids,
             labels=labels,
             custom_labels=custom_labels,

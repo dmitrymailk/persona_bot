@@ -2,6 +2,7 @@ import argparse
 from dataclasses import dataclass
 from itertools import chain
 from typing import List, Dict
+import os
 
 from datasets import load_metric
 
@@ -94,7 +95,9 @@ class ExperimentArgumentParserV1:
 
         args = TrainArgumentsV1(**args)
         cuda_devices = [int(item) for item in open("./cuda_devices").read().split(" ")]
-        assert args.cuda_device in cuda_devices
+
+        if os.getlogin() != "dimweb":
+            assert args.cuda_device in cuda_devices
 
         self.args = args
 

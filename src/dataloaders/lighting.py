@@ -2,7 +2,9 @@ from typing import Optional
 import os
 
 from src.dataloaders.datasets import BaseInitialDatasetV1
-from src.dataloaders.causal_samplers.hypothesis_1 import BaseDatasetSampleV1
+from src.dataloaders.causal_samplers.causal_samplers_hypothesis_1 import (
+    BaseDatasetSampleV1,
+)
 from src.hyperparameters.causal_modeling_hyperparameters import BaseHyperparametersV1
 
 from pytorch_lightning import LightningDataModule

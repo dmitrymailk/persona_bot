@@ -127,4 +127,6 @@ class LightingSeq2SeqModelV1(LightingCausalModelV1):
             self.database_logger = DatabaseLoggerV1(
                 wandb_run_id=wandb.run.id,
                 hyperparameters=self.hyperparameters,
+                host=self.hyperparameters.host,
+                port=self.hyperparameters.port,
             )

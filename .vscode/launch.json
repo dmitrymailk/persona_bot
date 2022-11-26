@@ -17,6 +17,20 @@
 				"--cuda_device",
 				"1",
 			]
-		}
+		},
+		{
+			"name": "Debug seq2seq model",
+			"type": "python",
+			"request": "launch",
+			"module": "src.train_scripts.seq2seq_training",
+			"console": "integratedTerminal",
+			"justMyCode": true,
+			"args": [
+				"--debug_status",
+				"1",
+				"--cuda_device",
+				"0",
+			]
+		},
 	]
 }

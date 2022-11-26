@@ -1,7 +1,7 @@
 from src.dataloaders.persona_chat_dataloaders import PersonaChatDatasetV1
-from src.dataloaders.seq2seq_samplers import (
-    Seq2SeqTrainPersonaSampleV1,
-    Seq2SeqValidPersonaSampleV1,
+from src.dataloaders.seq2seq_samplers.seq2seq_samplers_hypothesis_1 import (
+    H1Seq2SeqTrainPersonaSampleV1,
+    H1Seq2SeqValidPersonaSampleV1,
 )
 from src.dataloaders.lighting import LightningDataModuleV1
 from src.hyperparameters.causal_modeling_hyperparameters import (
@@ -23,7 +23,7 @@ from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
 
 
-def experiment_1():
+def h1_experiment_1():
     """
     - t5-small - ошибка nan (из-за fp16, устранена на fp32)
     - t5-base - ошибка nan (устранена на fp32)
@@ -83,8 +83,8 @@ def experiment_1():
         tokenizer=tokenizer,
         base_train_dataset_class=PersonaChatDatasetV1,
         base_valid_dataset_class=PersonaChatDatasetV1,
-        base_train_sample_class=Seq2SeqTrainPersonaSampleV1,
-        base_valid_sample_class=Seq2SeqValidPersonaSampleV1,
+        base_train_sample_class=H1Seq2SeqTrainPersonaSampleV1,
+        base_valid_sample_class=H1Seq2SeqValidPersonaSampleV1,
         debug_status=args.debug_status,
         device=device,
     )
