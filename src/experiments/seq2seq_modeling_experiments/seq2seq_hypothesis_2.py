@@ -51,15 +51,6 @@ def h2_experiment_1():
         max_epochs = 2
 
     devices = [args.cuda_device]
-    # if os.getlogin() == "dimweb":
-    #     devices = None
-
-    lighting_hyperparameters = H1LightingHyperparametersV1(
-        precision=32,
-        # accumulate_grad_batches=3,
-        max_epochs=max_epochs,
-        devices=devices,
-    ).__dict__
 
     hyperparameters = H2PersonaChatHyperparametersV1(
         train_batch_size=8,
@@ -75,6 +66,14 @@ def h2_experiment_1():
     deterministic = True
     if hyperparameters.model_name in ["google/long-t5-tglobal-base"]:
         deterministic = False
+
+    lighting_hyperparameters = H1LightingHyperparametersV1(
+        precision=32,
+        # accumulate_grad_batches=3,
+        max_epochs=max_epochs,
+        devices=devices,
+        deterministic=deterministic,
+    ).__dict__
 
     tokenizer = AutoTokenizer.from_pretrained(hyperparameters.model_name)
     special_tokens = [
