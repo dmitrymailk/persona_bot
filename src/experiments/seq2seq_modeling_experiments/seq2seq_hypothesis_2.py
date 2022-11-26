@@ -24,6 +24,8 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
 
+import torch
+
 
 def h2_experiment_1():
     """
@@ -69,6 +71,9 @@ def h2_experiment_1():
         debug_status=args.debug_status,
         chat_history_pair_length=7,
     )
+
+    if hyperparameters.model_name in ["google/long-t5-tglobal-base"]:
+        torch.use_deterministic_algorithms(False)
 
     tokenizer = AutoTokenizer.from_pretrained(hyperparameters.model_name)
     special_tokens = [
