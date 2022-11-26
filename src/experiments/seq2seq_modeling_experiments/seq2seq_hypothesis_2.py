@@ -142,7 +142,6 @@ def h2_experiment_1():
         accelerator=accelerator,
         logger=wandb_logger.logger,
         callbacks=[checkpoint_callback],
-        deterministic=deterministic,
         **lighting_hyperparameters,
     )
     if args.debug_status != 1:
