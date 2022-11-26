@@ -72,8 +72,9 @@ def h2_experiment_1():
         chat_history_pair_length=7,
     )
 
+    deterministic = True
     if hyperparameters.model_name in ["google/long-t5-tglobal-base"]:
-        torch.use_deterministic_algorithms(False)
+        deterministic = False
 
     tokenizer = AutoTokenizer.from_pretrained(hyperparameters.model_name)
     special_tokens = [
@@ -142,6 +143,7 @@ def h2_experiment_1():
         accelerator=accelerator,
         logger=wandb_logger.logger,
         callbacks=[checkpoint_callback],
+        deterministic=deterministic,
         **lighting_hyperparameters,
     )
     if args.debug_status != 1:
