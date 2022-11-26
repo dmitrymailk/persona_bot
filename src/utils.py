@@ -94,10 +94,6 @@ class ExperimentArgumentParserV1:
         args = {arg[0]: arg[1] for arg in args}
 
         args = TrainArgumentsV1(**args)
-        cuda_devices = [int(item) for item in open("./cuda_devices").read().split(" ")]
-
-        if os.getlogin() != "dimweb":
-            assert args.cuda_device in cuda_devices
 
         self.args = args
 
