@@ -2,7 +2,7 @@ training_script=src.train_scripts.seq2seq_training
 
 train_status=0
 cuda_device=-1
-while getopts "d:" opt; do
+while getopts "d:c:" opt; do
 	case $opt in
 		d)
             train_status=${OPTARG};;
