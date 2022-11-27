@@ -93,7 +93,7 @@ def h3_experiment_1():
         hyperparameters=hyperparameters,
         tags=[
             "causal_modeling",
-            "hypothesis_2",
+            "hypothesis_3",
         ],
         notes=notes,
     )
