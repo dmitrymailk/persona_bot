@@ -34,9 +34,10 @@ def h3_experiment_1():
     - RUCAIBox/mvp - не работает
     - roberta-base - не работает
     """
-    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-    cuda_devices = ",".join(open("./cuda_devices", "r").read().split(" "))
-    os.environ["CUDA_VISIBLE_DEVICES"] = cuda_devices
+    if os.getlogin() != "dimweb":
+        os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+        cuda_devices = ",".join(open("./cuda_devices", "r").read().split(" "))
+        os.environ["CUDA_VISIBLE_DEVICES"] = cuda_devices
 
     parser = ExperimentArgumentParserV1()
     args: TrainArgumentsV1 = parser.args
