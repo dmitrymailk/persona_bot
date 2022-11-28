@@ -39,6 +39,7 @@ def h3_experiment_1():
     - google/long-t5-tglobal-base
     - google/bigbird-pegasus-large-arxiv - не помещается на карту
     - allenai/led-base-16384 - очень долго обучается
+    - RUCAIBox/mvp-open-dialog
     """
     if os.getlogin() != "dimweb":
         os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -55,10 +56,10 @@ def h3_experiment_1():
     devices = [args.cuda_device]
 
     hyperparameters = H2PersonaChatHyperparametersV1(
-        train_batch_size=8,
+        train_batch_size=4,
         valid_batch_size=16,
         # model_name="t5-small",
-        model_name="facebook/bart-base",
+        model_name="RUCAIBox/mvp-open-dialog",
         model_architecture="seq2seq",
         predicted_texts_folder="./predicted_texts",
         debug_status=args.debug_status,
