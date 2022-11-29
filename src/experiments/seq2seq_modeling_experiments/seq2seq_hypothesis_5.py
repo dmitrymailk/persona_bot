@@ -1,6 +1,7 @@
 import os
 
-from src.dataloaders.persona_chat_dataloaders import PersonaChatDatasetV1
+# from src.dataloaders.persona_chat_dataloaders import PersonaChatDatasetV1
+from src.dataloaders.focus_dataloaders import FoCusDatasetV1
 from src.dataloaders.seq2seq_samplers.seq2seq_samplers_hypothesis_4 import (
     H4Seq2SeqTrainPersonaSampleV1,
     H4Seq2SeqValidPersonaSampleV1,
@@ -113,8 +114,8 @@ def h5_experiment_1():
         valid_path_dataset="./datasets/focus/valid_focus.json",
         hyperparameters=hyperparameters,
         tokenizer=tokenizer,
-        base_train_dataset_class=PersonaChatDatasetV1,
-        base_valid_dataset_class=PersonaChatDatasetV1,
+        base_train_dataset_class=FoCusDatasetV1,
+        base_valid_dataset_class=FoCusDatasetV1,
         base_train_sample_class=H4Seq2SeqTrainPersonaSampleV1,
         base_valid_sample_class=H4Seq2SeqValidPersonaSampleV1,
         debug_status=args.debug_status,
