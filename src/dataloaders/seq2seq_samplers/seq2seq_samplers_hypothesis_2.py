@@ -117,28 +117,6 @@ class H2Seq2SeqValidPersonaSampleV1(H2Seq2SeqTrainPersonaSampleV1):
         sample_id = self.dataset_sample["sample_id"]
 
         train_sample = super().get_sample()
-        [
-            "i like to remodel homes .",
-            "i like to go hunting .",
-            "i like to shoot a bow .",
-            "my favorite holiday is halloween .",
-        ]
-        [
-            "hi , how are you doing ? i'm getting ready to do some cheetah chasing to stay in shape .",
-            "you must be very fast . hunting is one of my favorite hobbies .",
-            "i am ! for my hobby i like to do canning or some whittling .",
-            "i also remodel homes when i am not out bow hunting .",
-            "that's neat . when i was in high school i placed 6th in 100m dash !",
-            "that's awesome . do you have a favorite season or time of year ?",
-            "i do not . but i do have a favorite meat since that is all i eat exclusively .",
-            "what is your favorite meat to eat ?",
-            "i would have to say its prime rib . do you have any favorite foods ?",
-            "i like chicken or macaroni and cheese .",
-            "do you have anything planned for today ? i think i am going to do some canning .",
-            "i am going to watch football . what are you canning ?",
-            "i think i will can some jam . do you also play footfall for fun ?",
-        ]
-        "<s><persona>i like to remodel homes.<p_sep>i like to go hunting.<p_sep>i like to shoot a bow.<p_sep>my favorite holiday is halloween.<chat>hi, how are you doing? i'm getting ready to do some cheetah chasing to<c_sep>you must be very fast. hunting is one of my favorite hobbies.<responce>i am! for my hobby i like to do canning or some whittling.</s>"
 
         return H1Seq2SeqSampleDictV2(
             input_ids=train_sample["input_ids"],

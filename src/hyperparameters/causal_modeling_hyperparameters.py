@@ -72,3 +72,40 @@ class H2PersonaChatHyperparametersV1(BaseHyperparametersV1):
 
     host: str = "195.14.48.196"
     port: int = 2345
+
+
+@dataclass
+class H4PersonaChatHyperparametersV1(BaseHyperparametersV1):
+    """
+    chat_history_pair_length: int - количество пар диалога с конца
+    max_tokens_length: int - максимальная длина последовательности
+
+    <sep> - специальный токен, раздедяющий токен
+    <query> - специальный токен, который оборачивает последнюю реплику пользователя
+    <query/> -
+    <response> - специальный токен, оборачивает ответ пользователя
+    <response/>
+    """
+
+    train_batch_size: int = 16
+    valid_batch_size: int = 16
+    chat_history_pair_length: int = 7
+    max_tokens_length: int = 359
+    model_name: str = "gpt2"
+    model_architecture: str = "causal"
+    max_response_length: int = 512
+    project_name: str = "persona_bot"
+    predicted_texts_folder: str = "./predicted_texts"
+    debug_status: int = 0
+
+    sep_token: str = "<sep>"
+    query_token_open: str = "<query>"
+    query_token_close: str = "</query>"
+    response_token_open: str = "<response>"
+    response_token_close: str = "</response>"
+
+    persona_max_length: int = 14
+    chat_max_length: int = 19
+
+    host: str = "195.14.48.196"
+    port: int = 2345
