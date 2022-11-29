@@ -61,7 +61,7 @@ def h4_experiment_1():
         model_architecture="seq2seq",
         predicted_texts_folder="./predicted_texts",
         debug_status=args.debug_status,
-        chat_history_pair_length=3,
+        chat_history_pair_length=2,
     )
 
     deterministic = True
