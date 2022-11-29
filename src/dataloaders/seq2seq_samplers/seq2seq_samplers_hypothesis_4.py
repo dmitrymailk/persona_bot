@@ -64,7 +64,7 @@ class H4Seq2SeqTrainPersonaSampleV1(H2CausalTrainPersonaSampleV1):
         persona = self.dataset_sample["persona"]
         history = self.dataset_sample["history"]
         history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
-        random.shuffle(persona)
+        # random.shuffle(persona)
 
         answer = history[-1]
         query = history[-2]

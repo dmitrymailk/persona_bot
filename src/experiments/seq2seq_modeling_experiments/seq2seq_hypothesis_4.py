@@ -55,7 +55,7 @@ def h4_experiment_1():
 
     hyperparameters = H4PersonaChatHyperparametersV1(
         train_batch_size=16,
-        valid_batch_size=32,
+        valid_batch_size=16,
         # model_name="t5-small",
         model_name="facebook/bart-base",
         model_architecture="seq2seq",
