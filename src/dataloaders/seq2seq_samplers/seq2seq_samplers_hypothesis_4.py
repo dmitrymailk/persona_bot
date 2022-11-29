@@ -76,7 +76,7 @@ class H4Seq2SeqTrainPersonaSampleV1(H2CausalTrainPersonaSampleV1):
         )
 
         encoded_query = self._tok(
-            query,
+            [query],
             max_length=self.hyperparameters.chat_max_length,
         )
 
@@ -86,7 +86,7 @@ class H4Seq2SeqTrainPersonaSampleV1(H2CausalTrainPersonaSampleV1):
         )
 
         encoded_answer = self._tok(
-            answer,
+            [answer],
             max_length=self.hyperparameters.chat_max_length,
         )
 
