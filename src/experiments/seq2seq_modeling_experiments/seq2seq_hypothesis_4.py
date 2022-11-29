@@ -7,7 +7,7 @@ from src.dataloaders.seq2seq_samplers.seq2seq_samplers_hypothesis_4 import (
 )
 from src.dataloaders.lighting import LightningDataModuleV1
 from src.hyperparameters.causal_modeling_hyperparameters import (
-    H2PersonaChatHyperparametersV1,
+    H4PersonaChatHyperparametersV1,
 )
 from src.lighting_models.causal_lighting_models import LightingCausalModelV1
 from src.hyperparameters.lighting import H1LightingHyperparametersV1
@@ -53,7 +53,7 @@ def h4_experiment_1():
 
     devices = [args.cuda_device]
 
-    hyperparameters = H2PersonaChatHyperparametersV1(
+    hyperparameters = H4PersonaChatHyperparametersV1(
         train_batch_size=8,
         valid_batch_size=16,
         # model_name="t5-small",
