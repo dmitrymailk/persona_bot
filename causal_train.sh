@@ -1,4 +1,4 @@
-training_script=src.train_scripts.causal_training
+training_script=dimweb_persona_bot.train_scripts.causal_training
 
 train_status=0
 cuda_device=-1

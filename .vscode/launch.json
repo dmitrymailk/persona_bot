@@ -8,7 +8,7 @@
 			"name": "Debug causal model",
 			"type": "python",
 			"request": "launch",
-			"module": "src.train_scripts.causal_training",
+			"module": "dimweb_persona_bot.train_scripts.causal_training",
 			"console": "integratedTerminal",
 			"justMyCode": true,
 			"args": [
@@ -22,7 +22,7 @@
 			"name": "Debug seq2seq model",
 			"type": "python",
 			"request": "launch",
-			"module": "src.train_scripts.seq2seq_training",
+			"module": "dimweb_persona_bot.train_scripts.seq2seq_training",
 			"console": "integratedTerminal",
 			"justMyCode": true,
 			"args": [
