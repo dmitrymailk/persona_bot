@@ -110,6 +110,27 @@ class DialogBotV1:
         )
         return answer[0]
 
+    def next_response(self) -> str:
+        """
+        делает предсказание на основе текущей истории
+        и персоны
+
+        полезно если мы управляем и отслеживаем состояние извне
+        а этот бот нужен только для генерации ответов
+        """
+
+        sample = self._get_sample(
+            persona=self.persona,
+            history=self.history,
+        )
+        answer = self.generate_responce(sample)
+        answer = self.tokenizer.batch_decode(
+            answer,
+            skip_special_tokens=True,
+        )
+        self.history.append(answer[0])
+        return answer[0]
+
     def generate_responce(self, sample):
         return self.model.generate(**sample, max_length=20)
 
