@@ -17,10 +17,17 @@ from dimweb_persona_bot.dataloaders.seq2seq_samplers.seq2seq_samplers_hypothesis
 
 from transformers import AutoTokenizer
 
+import torch
+
 
 class H2Seq2SeqInferenceSampleDictV1(TypedDict):
     input_ids: List[int]
     attention_mask: List[int]
+
+
+class H2Seq2SeqInferenceSampleDictV2(TypedDict):
+    input_ids: torch.Tensor
+    attention_mask: torch.Tensor
 
 
 class H2Seq2SeqTrainPersonaSampleV1(H2CausalTrainPersonaSampleV1):

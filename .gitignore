@@ -166,3 +166,5 @@ persona_bot
 temp.csv
 env
 models
+dist
+test_env/

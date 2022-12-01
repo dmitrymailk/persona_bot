@@ -56,3 +56,6 @@ Seq2Seq:
 ```text
 тоже самое что и в hypothesis 4, но теперь исполььзую датасет FoCus	
 ```
+
+- [package project](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
+- [install project from git](https://stackoverflow.com/questions/15268953/how-to-install-python-package-from-github)
