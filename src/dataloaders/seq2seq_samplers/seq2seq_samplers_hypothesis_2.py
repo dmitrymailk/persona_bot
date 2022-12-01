@@ -16,6 +16,11 @@ from src.dataloaders.seq2seq_samplers.seq2seq_samplers_hypothesis_1 import (
 from transformers import AutoTokenizer
 
 
+class H2Seq2SeqInferenceSampleDictV1(TypedDict):
+    input_ids: List[int]
+    attention_mask: List[int]
+
+
 class H2Seq2SeqTrainPersonaSampleV1(H2CausalTrainPersonaSampleV1):
     """
     seq2seq hypothesis_2
@@ -125,4 +130,50 @@ class H2Seq2SeqValidPersonaSampleV1(H2Seq2SeqTrainPersonaSampleV1):
             attention_mask=train_sample["attention_mask"],
             sample_id=sample_id,
             persona=persona,
+        )
+
+
+class H2Seq2SeqInferencePersonaSampleV1(H2Seq2SeqTrainPersonaSampleV1):
+    def get_sample(self) -> H2Seq2SeqInferenceSampleDictV1:
+        history = self.dataset_sample["history"]
+        history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
+        persona = self.dataset_sample["persona"]
+
+        encoded_persona = self.tokenizer.batch_encode_plus(
+            persona,
+            add_special_tokens=False,
+            truncation=True,
+            max_length=self.hyperparameters.persona_max_length,
+        )
+
+        encoded_persona = self._add_sep_token_persona(
+            input_ids=encoded_persona["input_ids"],
+        )
+
+        encoded_history = self.tokenizer.batch_encode_plus(
+            history,
+            add_special_tokens=False,
+            truncation=True,
+            max_length=self.hyperparameters.chat_max_length,
+        )
+        encoded_history = self._add_sep_token_chat_train(
+            input_ids=encoded_history["input_ids"],
+        )
+
+        bos_token = self.get_bos_token_id()
+
+        input_ids = [
+            *bos_token,
+            self.persona_id,
+            *encoded_persona,
+            self.chat_id,
+            *encoded_history,
+            self.tokenizer.eos_token_id,
+        ]
+
+        attention_mask = [1] * len(input_ids)
+
+        return H2Seq2SeqInferenceSampleDictV1(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
         )
