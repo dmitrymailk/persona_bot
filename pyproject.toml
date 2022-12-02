@@ -6,13 +6,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "dimweb_persona_bot"
-version = "0.0.2"
+version = "0.0.6"
 authors = [
   { name="dimweb", email="dimweb.tech@mail.ru" },
 ]
 description = "A dialogue bot with a personality"
 readme = "README.md"
-requires-python = ">=3.10.6"
+requires-python = ">=3.7.0"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -87,8 +87,10 @@ dependencies = [
   "typing_extensions==4.4.0",
   "urllib3==1.26.13",
   "wandb==0.13.5",
-  "Werkzeug==2.2.2",
+  "werkzeug==2.0.3",
   "yarl==1.8.1",
+  "datasets==2.4.0",
+  "rouge-score==0.0.4",
 ]
 [project.urls]
 "Github page" = "https://github.com/dmitrymailk/persona_bot"

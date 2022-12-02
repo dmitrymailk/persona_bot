@@ -59,3 +59,11 @@ Seq2Seq:
 
 - [package project](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
 - [install project from git](https://stackoverflow.com/questions/15268953/how-to-install-python-package-from-github)
+
+```bash
+python3 -m build
+```
+
+```bash
+twine upload dist/*
+```

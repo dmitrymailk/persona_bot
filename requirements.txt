@@ -68,3 +68,5 @@ urllib3==1.26.13
 wandb==0.13.5
 werkzeug==2.0.3
 yarl==1.8.1
+datasets==2.4.0
+rouge-score==0.0.4
