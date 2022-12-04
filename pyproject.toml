@@ -20,7 +20,6 @@ classifiers = [
 ]
 dependencies = [
   "peewee==3.15.4",
-  "transformers==4.25.1",
   "pytorch-lightning==1.7.6",
   "numpy",
   "pandas",
