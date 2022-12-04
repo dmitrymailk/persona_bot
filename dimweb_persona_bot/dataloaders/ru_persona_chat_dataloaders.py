@@ -39,7 +39,8 @@ class RUPersonaChatDatasetV1(BaseInitialDatasetV1):
             persona,
             features="html.parser",
         )
-        return [item + "." for item in soup.text.split(".") if item]
+        text = "".join([str(item) for item in soup.contents])
+        return [item + " " for item in text.split("<br />") if item]
 
     def _extract_history(
         self,
