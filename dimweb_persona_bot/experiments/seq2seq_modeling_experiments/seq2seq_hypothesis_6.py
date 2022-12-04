@@ -50,8 +50,8 @@ def h6_experiment_1():
     devices = [args.cuda_device]
 
     hyperparameters = H2PersonaChatHyperparametersV1(
-        train_batch_size=1,
-        valid_batch_size=1,
+        train_batch_size=2,
+        valid_batch_size=2,
         # model_name="t5-small",
         model_name="facebook/mbart-large-50",
         model_architecture="seq2seq",
