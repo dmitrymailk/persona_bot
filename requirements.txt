@@ -4,3 +4,6 @@ pytorch-lightning==1.7.6
 numpy
 pandas
 wandb==0.13.5
+datasets==2.4.0
+rouge-score==0.0.4
+torchmetrics==0.7.0
