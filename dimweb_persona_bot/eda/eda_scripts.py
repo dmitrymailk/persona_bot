@@ -1,10 +1,17 @@
 from dimweb_persona_bot.dataloaders.persona_chat_dataloaders import PersonaChatDatasetV2
+from dimweb_persona_bot.dataloaders.ru_persona_chat_dataloaders import (
+    RUPersonaChatDatasetV2,
+)
 from transformers import AutoTokenizer
 import numpy as np
 import pandas as pd
 
 
 class TokensLengthAnalyzerV1:
+    """
+    persona chat original dataset
+    """
+
     def __init__(
         self,
         train_dataset_path: str,
@@ -128,3 +135,24 @@ class TokensLengthAnalyzerV1:
             model_len = tokenizer.model_max_length
             tokenizer_lengths.append(model_len)
             print(f"Model: {model_name}, Max length: {model_len}")
+
+
+class TokensLengthAnalyzerV2(TokensLengthAnalyzerV1):
+    """
+    RU persona chat dataset
+    """
+
+    def __init__(
+        self,
+        train_dataset_path: str,
+        valid_dataset_path: str,
+    ):
+        self.train_dataset = RUPersonaChatDatasetV2(
+            input_dataset_path=train_dataset_path,
+        )
+        self.valid_dataset = RUPersonaChatDatasetV2(
+            input_dataset_path=valid_dataset_path,
+        )
+
+        self.tokens_length_table = []
+        self.fields_length_table = []

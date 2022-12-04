@@ -57,6 +57,15 @@ Seq2Seq:
 тоже самое что и в hypothesis 4, но теперь исполььзую датасет FoCus	
 ```
 
+#### hypothesis 6
+```text
+теперь мы берем датасет ru persona chat.
+остальной набор остается неизменным.
+
+разве что меняем заменяем оригинальные модели на мультиязычные, так как
+в них более оптимизированные токенизаторы и с ними получается меньше токенов, чем у исходных.
+```
+
 - [package project](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
 - [install project from git](https://stackoverflow.com/questions/15268953/how-to-install-python-package-from-github)
 
