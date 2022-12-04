@@ -6,7 +6,7 @@ from dimweb_persona_bot.dataloaders.persona_chat_dataloaders import (
 )
 
 import pandas as pd
-
+import re
 from bs4 import BeautifulSoup
 
 
@@ -40,7 +40,10 @@ class RUPersonaChatDatasetV1(BaseInitialDatasetV1):
             features="html.parser",
         )
         text = "".join([str(item) for item in soup.contents])
-        return [item + " " for item in text.split("<br />") if item]
+        text = text.replace("<br/>", ". ")
+        text = text.replace(".. ", ". ")
+        text = re.sub(r"<span.*\">|</span>", "", text)
+        return [(item + ".").strip() for item in text.split(".") if item.strip()]
 
     def _extract_history(
         self,
