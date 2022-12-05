@@ -1,5 +1,5 @@
 field,model,95%,stage
-persona,facebook/bart-base,31.0,train
-history,facebook/bart-base,166.0,train
-persona,facebook/bart-base,31.0,valid
-history,facebook/bart-base,157.0,valid
+persona,facebook/mbart-large-50,9.0,train
+history,facebook/mbart-large-50,44.0,train
+persona,facebook/mbart-large-50,9.0,valid
+history,facebook/mbart-large-50,42.0,valid

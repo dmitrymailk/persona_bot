@@ -35,6 +35,7 @@ def h6_experiment_1():
     """
     - facebook/mbart-large-50
     - facebook/bart-base
+    - facebook/mbart-large-50-many-to-many-mmt
     """
     if os.getlogin() != "dimweb":
         os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -54,13 +55,13 @@ def h6_experiment_1():
         train_batch_size=8,
         valid_batch_size=16,
         # model_name="t5-small",
-        model_name="facebook/mbart-large-50",
+        model_name="facebook/mbart-large-50-many-to-many-mmt",
         model_architecture="seq2seq",
         predicted_texts_folder="./predicted_texts",
         debug_status=args.debug_status,
         chat_history_pair_length=3,
-        persona_max_length=31,
-        chat_max_length=166,
+        persona_max_length=13,
+        chat_max_length=44,
     )
 
     deterministic = True
@@ -136,26 +137,17 @@ def h6_experiment_1():
         filename=f"{hyperparameters.model_name}"
         + "-{epoch:02d}-{valid_blue_score_epoch:.2f}",
     )
-    checkpoint_path = "./persona_bot/2vabb4b2/checkpoints/facebook/mbart-large-50-epoch=03-epoch=3.00.ckpt"
-    # trainer = Trainer(
-    #     accelerator=accelerator,
-    #     logger=wandb_logger.logger,
-    #     callbacks=[checkpoint_callback],
-    #     **lighting_hyperparameters,
-    # )
-    # if args.debug_status != 1:
-    #     trainer.validate(model=model, dataloaders=data_module)
 
-    # trainer.fit(
-    #     model,
-    #     datamodule=data_module,
-    # )
-    model = LightingSeq2SeqModelV1.load_from_checkpoint(
-        checkpoint_path=checkpoint_path,
-        hyperparameters=hyperparameters,
-        tokenizer=tokenizer,
-        base_model=base_model,
+    trainer = Trainer(
+        accelerator=accelerator,
+        logger=wandb_logger.logger,
+        callbacks=[checkpoint_callback],
+        **lighting_hyperparameters,
     )
-    model_path = "./models/2vabb4b2/"
-    model.model.save_pretrained(model_path)
-    model.tokenizer.save_pretrained(model_path)
+    if args.debug_status != 1:
+        trainer.validate(model=model, dataloaders=data_module)
+
+    trainer.fit(
+        model,
+        datamodule=data_module,
+    )
