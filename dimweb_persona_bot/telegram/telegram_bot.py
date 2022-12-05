@@ -9,9 +9,6 @@ from dimweb_persona_bot.hyperparameters.causal_modeling_hyperparameters import (
 
 from telegram import (
     Update,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    KeyboardButton,
     ReplyKeyboardMarkup,
 )
 from telegram.ext import (
@@ -95,8 +92,6 @@ class MessageQueue:
 
             history.append(message)
 
-            # print("history", history)
-            # print("persona", persona)
             bot2 = DialogBotV2(
                 model=model,
                 tokenizer=tokenizer,
@@ -105,10 +100,12 @@ class MessageQueue:
                 persona=persona,
             )
             bot_response = bot2.next_response()
-            # print("bot response", bot_response)
+
             update_object = waiter["update_object"]
             history.append(bot_response)
             SUPER_SIMPLE_DATABASE[user_username]["history"] = history
+
+            logger.info("Bot response %s : %s", message, bot_response)
 
             await update_object.message.reply_text(
                 bot_response,
