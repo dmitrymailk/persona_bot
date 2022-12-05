@@ -43,14 +43,14 @@ def h6_experiment_1():
     parser = ExperimentArgumentParserV1()
     args: TrainArgumentsV1 = parser.args
 
-    max_epochs = 4
+    max_epochs = 1
     if args.debug_status == 1:
         max_epochs = 2
 
     devices = [args.cuda_device]
 
     hyperparameters = H2PersonaChatHyperparametersV1(
-        train_batch_size=2,
+        train_batch_size=1,
         valid_batch_size=8,
         # model_name="t5-small",
         model_name="facebook/mbart-large-50",
