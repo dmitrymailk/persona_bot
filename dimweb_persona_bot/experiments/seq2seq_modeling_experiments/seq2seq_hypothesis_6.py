@@ -51,8 +51,8 @@ def h6_experiment_1():
     devices = [args.cuda_device]
 
     hyperparameters = H2PersonaChatHyperparametersV1(
-        train_batch_size=16,
-        valid_batch_size=32,
+        train_batch_size=8,
+        valid_batch_size=16,
         # model_name="t5-small",
         model_name="facebook/mbart-large-50",
         model_architecture="seq2seq",
@@ -131,21 +131,31 @@ def h6_experiment_1():
 
     checkpoint_callback = ModelCheckpoint(
         save_top_k=1,
-        monitor="epoch",
+        monitor="valid_blue_score_epoch",
         mode="max",
-        filename=f"{hyperparameters.model_name}" + "-{epoch:02d}-{epoch:.2f}",
+        filename=f"{hyperparameters.model_name}"
+        + "-{epoch:02d}-{valid_blue_score_epoch:.2f}",
     )
+    checkpoint_path = "./persona_bot/2vabb4b2/checkpoints/facebook/mbart-large-50-epoch=03-epoch=3.00.ckpt"
+    # trainer = Trainer(
+    #     accelerator=accelerator,
+    #     logger=wandb_logger.logger,
+    #     callbacks=[checkpoint_callback],
+    #     **lighting_hyperparameters,
+    # )
+    # if args.debug_status != 1:
+    #     trainer.validate(model=model, dataloaders=data_module)
 
-    trainer = Trainer(
-        accelerator=accelerator,
-        logger=wandb_logger.logger,
-        callbacks=[checkpoint_callback],
-        **lighting_hyperparameters,
+    # trainer.fit(
+    #     model,
+    #     datamodule=data_module,
+    # )
+    model = LightingSeq2SeqModelV1.load_from_checkpoint(
+        checkpoint_path=checkpoint_path,
+        hyperparameters=hyperparameters,
+        tokenizer=tokenizer,
+        base_model=base_model,
     )
-    if args.debug_status != 1:
-        trainer.validate(model=model, dataloaders=data_module)
-
-    trainer.fit(
-        model,
-        datamodule=data_module,
-    )
+    model_path = "./models/2vabb4b2/"
+    model.model.save_pretrained(model_path)
+    model.tokenizer.save_pretrained(model_path)

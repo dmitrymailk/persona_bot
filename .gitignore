@@ -168,3 +168,5 @@ env
 models
 dist
 test_env/
+token
+telegram_bot_dialogues/*

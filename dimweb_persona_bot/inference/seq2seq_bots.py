@@ -1,5 +1,6 @@
 from typing import List
 import random
+import os
 
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from dimweb_persona_bot.dataloaders.seq2seq_samplers.seq2seq_samplers_hypothesis_2 import (
@@ -80,7 +81,7 @@ class DialogBotV1:
             persona=self.persona,
             history=self.history,
         )
-        answer = self.generate_responce(sample)
+        answer = self.generate_response(sample)
         answer = self.tokenizer.batch_decode(
             answer,
             skip_special_tokens=True,
@@ -103,7 +104,7 @@ class DialogBotV1:
             history=temp_history,
         )
 
-        answer = self.generate_responce(sample)
+        answer = self.generate_response(sample)
         answer = self.tokenizer.batch_decode(
             answer,
             skip_special_tokens=True,
@@ -123,7 +124,7 @@ class DialogBotV1:
             persona=self.persona,
             history=self.history,
         )
-        answer = self.generate_responce(sample)
+        answer = self.generate_response(sample)
         answer = self.tokenizer.batch_decode(
             answer,
             skip_special_tokens=True,
@@ -131,12 +132,13 @@ class DialogBotV1:
         self.history.append(answer[0])
         return answer[0]
 
-    def generate_responce(self, sample):
+    def generate_response(self, sample):
         return self.model.generate(**sample, max_length=20)
 
     def start_chat(self):
         while True:
             message = input("You: ")
+
             if message == "exit":
                 break
             answer = self.chat(message)
@@ -148,10 +150,48 @@ class DialogBotV2(DialogBotV1):
     bot uses Contrastive Search
     """
 
-    def generate_responce(self, sample: H2Seq2SeqInferenceSampleDictV2):
+    def generate_response(self, sample: H2Seq2SeqInferenceSampleDictV2):
         return self.model.generate(
             **sample,
-            max_new_tokens=20,
-            penalty_alpha=0.1,
-            top_k=6,
+            max_new_tokens=60,
+            penalty_alpha=0.3,
+            top_k=20,
+            top_p=0.95,
         )
+
+
+def chat_with_bot_v2_console():
+    if os.getlogin() != "dimweb":
+        os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+        cuda_devices = ",".join(open("./cuda_devices", "r").read().split(" "))
+        os.environ["CUDA_VISIBLE_DEVICES"] = cuda_devices
+
+    model_name = "./models/2vabb4b2/"
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+    device = "cuda:0"
+    model.to(device)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    hyperparameters = H2PersonaChatHyperparametersV1(
+        model_architecture="seq2seq",
+        chat_history_pair_length=3,
+        persona_max_length=31,
+        chat_max_length=166,
+    )
+
+    bot2 = DialogBotV2(
+        model=model,
+        tokenizer=tokenizer,
+        hyperparameters=hyperparameters,
+        history=[],
+        persona=[
+            "Я студент 4 курса.",
+            "Люблю иногда бухать по пятницам.",
+            "У меня нет девушки.",
+            "Люблю писать код.",
+        ],
+    )
+    bot2.start_chat()
+
+
+if __name__ == "__main__":
+    chat_with_bot_v2_console()

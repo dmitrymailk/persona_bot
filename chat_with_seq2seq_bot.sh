@@ -1,0 +1,1 @@
+python -m dimweb_persona_bot.inference.seq2seq_bots
