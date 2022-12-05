@@ -34,6 +34,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 def h6_experiment_1():
     """
     - facebook/mbart-large-50
+    - facebook/bart-base
     """
     if os.getlogin() != "dimweb":
         os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -43,23 +44,23 @@ def h6_experiment_1():
     parser = ExperimentArgumentParserV1()
     args: TrainArgumentsV1 = parser.args
 
-    max_epochs = 1
+    max_epochs = 4
     if args.debug_status == 1:
         max_epochs = 2
 
     devices = [args.cuda_device]
 
     hyperparameters = H2PersonaChatHyperparametersV1(
-        train_batch_size=1,
-        valid_batch_size=8,
+        train_batch_size=8,
+        valid_batch_size=16,
         # model_name="t5-small",
-        model_name="facebook/mbart-large-50",
+        model_name="facebook/bart-base",
         model_architecture="seq2seq",
         predicted_texts_folder="./predicted_texts",
         debug_status=args.debug_status,
-        chat_history_pair_length=3,
-        persona_max_length=28,
-        chat_max_length=44,
+        chat_history_pair_length=2,
+        persona_max_length=31,
+        chat_max_length=166,
     )
 
     deterministic = True
