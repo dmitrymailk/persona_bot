@@ -156,7 +156,7 @@ class DialogBotV2(DialogBotV1):
             max_new_tokens=60,
             penalty_alpha=0.3,
             top_k=20,
-            top_p=0.95,
+            top_p=0.97,
         )
 
 
