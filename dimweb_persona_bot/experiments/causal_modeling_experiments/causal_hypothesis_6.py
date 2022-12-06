@@ -30,10 +30,10 @@ from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
 
 
-def h3_experiment_1():
+def h6_experiment_1():
     """
     модели у которых сдвиг токенов происходит внутри модели
-    - ru_
+    - sberbank-ai/rugpt3medium_based_on_gpt2
     """
     if os.getlogin() != "dimweb":
         os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -55,12 +55,14 @@ def h3_experiment_1():
     ).__dict__
 
     hyperparameters = H2PersonaChatHyperparametersV1(
-        train_batch_size=6,
-        valid_batch_size=16,
-        model_name="microsoft/DialoGPT-medium",
+        train_batch_size=16,
+        valid_batch_size=32,
+        model_name="sberbank-ai/rugpt3medium_based_on_gpt2",
         predicted_texts_folder="./predicted_texts",
         debug_status=args.debug_status,
         chat_history_pair_length=3,
+        persona_max_length=10,
+        chat_max_length=40,
     )
 
     tokenizer = AutoTokenizer.from_pretrained(hyperparameters.model_name)

@@ -113,7 +113,7 @@ class H2Seq2SeqTrainPersonaSampleV1(H2CausalTrainPersonaSampleV1):
 
     def get_bos_token_id(self) -> list:
         bos_token = []
-        if not "t5" in self.hyperparameters.model_name:
+        if not "t5" in self.hyperparameters.model_name.lower():
             if self.tokenizer.bos_token is not None:
                 bos_token = [self.tokenizer.bos_token_id]
 
