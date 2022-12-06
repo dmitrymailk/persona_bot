@@ -3,40 +3,37 @@ import os
 from dimweb_persona_bot.dataloaders.ru_persona_chat_dataloaders import (
     RUPersonaChatDatasetV1,
 )
-from dimweb_persona_bot.dataloaders.seq2seq_samplers.seq2seq_samplers_hypothesis_2 import (
-    H2Seq2SeqValidPersonaSampleV1,
+from dimweb_persona_bot.dataloaders.causal_samplers.causal_samplers_hypothesis_2 import (
+    H2CausalValidPersonaSampleV1,
 )
-from dimweb_persona_bot.dataloaders.seq2seq_samplers.seq2seq_samplers_hypothesis_3 import (
-    H3Seq2SeqTrainPersonaSampleV1,
+from dimweb_persona_bot.dataloaders.causal_samplers.causal_samplers_hypothesis_3 import (
+    H3CausalTrainPersonaSampleV1,
 )
 from dimweb_persona_bot.dataloaders.lighting import LightningDataModuleV1
 from dimweb_persona_bot.hyperparameters.causal_modeling_hyperparameters import (
     H2PersonaChatHyperparametersV1,
 )
-
+from dimweb_persona_bot.lighting_models.causal_lighting_models import (
+    LightingCausalModelV1,
+)
 from dimweb_persona_bot.hyperparameters.lighting import H1LightingHyperparametersV1
 from dimweb_persona_bot.utils import (
     ExperimentArgumentParserV1,
     TrainArgumentsV1,
     WandbLoggerV2,
 )
-from dimweb_persona_bot.lighting_models.seq2seq_lighting_models import (
-    LightingSeq2SeqModelV1,
-)
 
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
 
 
-def h6_experiment_1():
+def h3_experiment_1():
     """
-    - facebook/mbart-large-50
-    - facebook/bart-base
-    - facebook/mbart-large-50-many-to-many-mmt
-    - sberbank-ai/ruT5-base
+    модели у которых сдвиг токенов происходит внутри модели
+    - ru_
     """
     if os.getlogin() != "dimweb":
         os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -50,33 +47,21 @@ def h6_experiment_1():
     if args.debug_status == 1:
         max_epochs = 2
 
-    devices = [args.cuda_device]
-
-    hyperparameters = H2PersonaChatHyperparametersV1(
-        train_batch_size=16,
-        valid_batch_size=32,
-        # model_name="t5-small",
-        model_name="sberbank-ai/ruT5-base",
-        model_architecture="seq2seq",
-        predicted_texts_folder="./predicted_texts",
-        debug_status=args.debug_status,
-        chat_history_pair_length=3,
-        persona_max_length=10,
-        chat_max_length=39,
-    )
-
-    deterministic = True
-    # fix cumsum error
-    if hyperparameters.model_name in ["google/long-t5-tglobal-base"]:
-        deterministic = False
-
     lighting_hyperparameters = H1LightingHyperparametersV1(
         precision=16,
         # accumulate_grad_batches=3,
         max_epochs=max_epochs,
-        devices=devices,
-        deterministic=deterministic,
+        devices=[args.cuda_device],
     ).__dict__
+
+    hyperparameters = H2PersonaChatHyperparametersV1(
+        train_batch_size=6,
+        valid_batch_size=16,
+        model_name="microsoft/DialoGPT-medium",
+        predicted_texts_folder="./predicted_texts",
+        debug_status=args.debug_status,
+        chat_history_pair_length=3,
+    )
 
     tokenizer = AutoTokenizer.from_pretrained(hyperparameters.model_name)
     special_tokens = [
@@ -90,6 +75,8 @@ def h6_experiment_1():
         special_tokens,
         special_tokens=True,
     )
+    # так надо. https://github.com/huggingface/transformers/issues/2630#issuecomment-684512764
+    tokenizer.pad_token_id = tokenizer.eos_token_id
 
     accelerator = "gpu"
     if args.debug_status == 1:
@@ -102,7 +89,7 @@ def h6_experiment_1():
     wandb_logger = WandbLoggerV2(
         hyperparameters=hyperparameters,
         tags=[
-            "seq2seq_modeling",
+            "causal_modeling",
             "hypothesis_6",
             "ru_persona_chat",
         ],
@@ -116,16 +103,16 @@ def h6_experiment_1():
         tokenizer=tokenizer,
         base_train_dataset_class=RUPersonaChatDatasetV1,
         base_valid_dataset_class=RUPersonaChatDatasetV1,
-        base_train_sample_class=H3Seq2SeqTrainPersonaSampleV1,
-        base_valid_sample_class=H2Seq2SeqValidPersonaSampleV1,
+        base_train_sample_class=H3CausalTrainPersonaSampleV1,
+        base_valid_sample_class=H2CausalValidPersonaSampleV1,
         debug_status=args.debug_status,
         device=device,
     )
 
-    base_model = AutoModelForSeq2SeqLM.from_pretrained(hyperparameters.model_name)
+    base_model = AutoModelForCausalLM.from_pretrained(hyperparameters.model_name)
     base_model.resize_token_embeddings(len(tokenizer))
 
-    model = LightingSeq2SeqModelV1(
+    model = LightingCausalModelV1(
         hyperparameters=hyperparameters,
         tokenizer=tokenizer,
         base_model=base_model,
@@ -133,10 +120,9 @@ def h6_experiment_1():
 
     checkpoint_callback = ModelCheckpoint(
         save_top_k=1,
-        monitor="valid_blue_score_epoch",
+        monitor="epoch",
         mode="max",
-        filename=f"{hyperparameters.model_name}"
-        + "-{epoch:02d}-{valid_blue_score_epoch:.2f}",
+        filename=f"{hyperparameters.model_name}" + "-{epoch:02d}-{epoch:.2f}",
     )
 
     trainer = Trainer(

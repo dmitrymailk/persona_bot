@@ -1,5 +1,5 @@
 field,model,95%,stage
-persona,facebook/mbart-large-50,9.0,train
-history,facebook/mbart-large-50,44.0,train
-persona,facebook/mbart-large-50,9.0,valid
-history,facebook/mbart-large-50,42.0,valid
+persona,sberbank-ai/ruT5-base,8.0,train
+history,sberbank-ai/ruT5-base,39.0,train
+persona,sberbank-ai/ruT5-base,8.0,valid
+history,sberbank-ai/ruT5-base,38.0,valid
