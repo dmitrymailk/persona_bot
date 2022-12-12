@@ -57,7 +57,7 @@ class H2PersonaChatHyperparametersV1(BaseHyperparametersV1):
     model_name: str = "gpt2"
     model_architecture: str = "causal"
     max_response_length: int = 512
-    project_name: str = "persona_bot"
+    project_name: str = "persona_bot_2"
     predicted_texts_folder: str = "./predicted_texts"
     debug_status: int = 0
 
@@ -94,7 +94,7 @@ class H4PersonaChatHyperparametersV1(BaseHyperparametersV1):
     model_name: str = "gpt2"
     model_architecture: str = "causal"
     max_response_length: int = 512
-    project_name: str = "persona_bot"
+    project_name: str = "persona_bot_2"
     predicted_texts_folder: str = "./predicted_texts"
     debug_status: int = 0
 

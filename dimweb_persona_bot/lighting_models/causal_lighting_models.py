@@ -76,7 +76,7 @@ class LightingCausalModelV1(LightningModule):
         generated_tokens = self.model.generate(
             input_ids=batch["input_ids"],
             attention_mask=batch["attention_mask"],
-            max_length=self.hyperparameters.max_response_length,
+            max_new_tokens=self.hyperparameters.max_response_length,
         )
 
         generated_tokens = self.tokenizer.batch_decode(
@@ -243,3 +243,23 @@ class LightingCausalModelV1(LightningModule):
                 host=self.hyperparameters.host,
                 port=self.hyperparameters.port,
             )
+
+    def on_save_checkpoint(self, checkpoint):
+        super().on_save_checkpoint(checkpoint)
+        epoch = self.custom_current_epoch
+        wandb_run_id = wandb.run.id
+        main_path = "./models"
+
+        if not os.path.exists(main_path):
+            os.makedirs(main_path)
+
+        runs_path = f"{main_path}/{wandb_run_id}"
+        if not os.path.exists(runs_path):
+            os.makedirs(f"{main_path}/{wandb_run_id}")
+
+        model_path = f"{runs_path}/{epoch}"
+        if not os.path.exists(model_path):
+            os.makedirs(model_path)
+
+        self.model.save_pretrained(model_path)
+        self.tokenizer.save_pretrained(model_path)
