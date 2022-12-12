@@ -33,15 +33,16 @@ train() {
 # clear dir
 # rm -rf ./training_logs/causal_model/*
 
-echo Your cuda device is $cuda_device
 if [ $cuda_device -eq -1 ]; then
     echo "Please specify the cuda device"
     exit 1
-elif [ $cuda_device -eq "all" ]; then
+# compare $cuda_device with string "all"
+elif [ $cuda_device -eq -2 ]; then
     cuda_device=-1
 fi
-fi
 
+
+echo Your cuda device is $cuda_device
 
 if [ $train_status -eq 1 ]; then
     debug $cuda_device
