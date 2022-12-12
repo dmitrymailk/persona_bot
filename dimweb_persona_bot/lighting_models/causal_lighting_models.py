@@ -142,7 +142,7 @@ class LightingCausalModelV1(LightningModule):
             },
         ]
 
-        optimizer = torch.optim.RAdam(
+        optimizer = torch.optim.AdamW(
             optimizer_grouped_parameters,
             lr=self.hyperparameters.learning_rate,
             eps=self.hyperparameters.adam_epsilon,

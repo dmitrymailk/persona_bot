@@ -49,10 +49,20 @@ class H1CausalTrainPersonaSampleV1(BaseDatasetSampleV1):
         self.tokenizer = tokenizer
         self.hyperparameters = hyperparameters
 
+    def add_spaces(
+        self,
+        items: List[str],
+    ) -> List[str]:
+        items = [item + " " for item in items]
+        return items
+
     def get_sample(self) -> H1CausalSampleDictV1:
         history = self.dataset_sample["history"]
         history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
+        history = self.add_spaces(history)
+
         persona = self.dataset_sample["persona"]
+        persona = self.add_spaces(persona)
 
         encoded_history = self.tokenizer.batch_encode_plus(
             history,
@@ -108,8 +118,11 @@ class H1CausalValidPersonaSampleV1(H1CausalTrainPersonaSampleV1):
     def get_sample(self) -> H1CausalSampleDictV1:
         history = self.dataset_sample["history"]
         history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
+        history = self.add_spaces(history)
+
         labels = [history.pop()]
         persona = self.dataset_sample["persona"]
+        persona = self.add_spaces(persona)
         sample_id = self.dataset_sample["sample_id"]
 
         encoded_history = self.tokenizer.batch_encode_plus(
