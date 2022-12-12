@@ -36,14 +36,6 @@ class LightingCausalModelV1(LightningModule):
         self.model = base_model
         self.database_logger = None
 
-        # я сначала выполняю валидацию сам
-        # если брать значение из кода, то оно будет два раза в начале 0
-        self.custom_current_epoch = -1
-
-        self.predicts = {
-            "valid": {},
-        }
-
     def training_step(
         self,
         batch,
@@ -56,7 +48,7 @@ class LightingCausalModelV1(LightningModule):
         )
         loss = predicts.loss
 
-        self.log("train_loss", loss)
+        self.log("train_loss", loss, batch_size=self.hyperparameters.train_batch_size)
 
         return loss
 
@@ -125,6 +117,7 @@ class LightingCausalModelV1(LightningModule):
             },
             on_step=True,
             on_epoch=True,
+            batch_size=self.hyperparameters.valid_batch_size,
         )
 
     def configure_optimizers(self):
@@ -149,7 +142,7 @@ class LightingCausalModelV1(LightningModule):
             },
         ]
 
-        optimizer = torch.optim.AdamW(
+        optimizer = torch.optim.RAdam(
             optimizer_grouped_parameters,
             lr=self.hyperparameters.learning_rate,
             eps=self.hyperparameters.adam_epsilon,
@@ -169,7 +162,7 @@ class LightingCausalModelV1(LightningModule):
         if not self.trainer.sanity_checking and self.database_logger is not None:
 
             self.database_logger.save_metrics(
-                epoch=self.custom_current_epoch,
+                epoch=self.current_epoch,
                 valid_loss_epoch=self.trainer.callback_metrics["valid_loss"],
                 blue_score_epoch=self.trainer.callback_metrics[
                     "valid_blue_score_epoch"
@@ -182,8 +175,6 @@ class LightingCausalModelV1(LightningModule):
                 ],
             )
 
-            self.custom_current_epoch += 1
-
     def save_generation_predicts(
         self,
         prediction_ids: List[str],
@@ -194,7 +185,7 @@ class LightingCausalModelV1(LightningModule):
     ):
         if not self.trainer.sanity_checking:
             run_id = wandb.run.id
-            epoch = self.custom_current_epoch
+            epoch = self.current_epoch
             paired_texts = []
             for label, generated_text, input_token, prediction_id, persona_item in zip(
                 decoded_labels,
@@ -246,7 +237,7 @@ class LightingCausalModelV1(LightningModule):
 
     def on_save_checkpoint(self, checkpoint):
         super().on_save_checkpoint(checkpoint)
-        epoch = self.custom_current_epoch
+        epoch = self.current_epoch
         wandb_run_id = wandb.run.id
         main_path = "./models"
 

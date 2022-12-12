@@ -170,3 +170,4 @@ dist
 test_env/
 token
 telegram_bot_dialogues/*
+persona_bot_2
