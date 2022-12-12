@@ -37,7 +37,11 @@ echo Your cuda device is $cuda_device
 if [ $cuda_device -eq -1 ]; then
     echo "Please specify the cuda device"
     exit 1
+elif [ $cuda_device -eq "all" ]; then
+    cuda_device=-1
 fi
+fi
+
 
 if [ $train_status -eq 1 ]; then
     debug $cuda_device
