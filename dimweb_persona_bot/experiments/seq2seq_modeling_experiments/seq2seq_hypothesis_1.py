@@ -3,6 +3,10 @@ from dimweb_persona_bot.dataloaders.seq2seq_samplers.seq2seq_samplers_hypothesis
     H1Seq2SeqTrainPersonaSampleV1,
     H1Seq2SeqValidPersonaSampleV1,
 )
+from dimweb_persona_bot.dataloaders.seq2seq_samplers.seq2seq_samplers_hypothesis_2 import (
+    H2Seq2SeqTrainPersonaSampleV1,
+    H2Seq2SeqValidPersonaSampleV1,
+)
 from dimweb_persona_bot.dataloaders.lighting import LightningDataModuleV1
 from dimweb_persona_bot.hyperparameters.causal_modeling_hyperparameters import (
     H2PersonaChatHyperparametersV1,
@@ -38,15 +42,15 @@ def h1_experiment_1():
         max_epochs = 2
     devices = [args.cuda_device]
     lighting_hyperparameters = H1LightingHyperparametersV1(
-        precision=16,
+        precision=32,
         devices=devices,
         max_epochs=max_epochs,
     ).__dict__
 
     hyperparameters = H2PersonaChatHyperparametersV1(
-        train_batch_size=8,
-        valid_batch_size=16,
-        model_name="facebook/bart-base",
+        train_batch_size=32,
+        valid_batch_size=64,
+        model_name="microsoft/GODEL-v1_1-base-seq2seq",
         predicted_texts_folder="./predicted_texts",
         debug_status=args.debug_status,
         model_architecture="seq2seq",
@@ -62,7 +66,7 @@ def h1_experiment_1():
         hyperparameters=hyperparameters,
         tags=[
             "seq2seq_modeling",
-            "hypothesis_1",
+            "hypothesis_2",
             "persona_bot_2",
         ],
     )
@@ -74,8 +78,8 @@ def h1_experiment_1():
         tokenizer=tokenizer,
         base_train_dataset_class=PersonaChatDatasetV1,
         base_valid_dataset_class=PersonaChatDatasetV1,
-        base_train_sample_class=H1Seq2SeqTrainPersonaSampleV1,
-        base_valid_sample_class=H1Seq2SeqValidPersonaSampleV1,
+        base_train_sample_class=H2Seq2SeqTrainPersonaSampleV1,
+        base_valid_sample_class=H2Seq2SeqValidPersonaSampleV1,
         debug_status=args.debug_status,
         device=device,
     )

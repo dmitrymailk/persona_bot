@@ -26,7 +26,18 @@ CausalLM:
 ```text
 CausalLM:
 	тоже самое как hypothesis 1 только перемешиваю персону и диалог при трейне.
+(результат как и ожидалось очень низкий)
 ```
+
+### hypothesis 2
+
+- [Позаимствовано у GOBEL.](https://huggingface.co/spaces/microsoft/GODEL-Demo/blob/main/app.py#L61)
+```text
+Seq2Seq:
+входная последовательность: [CONTEXT] dialog_1 EOS dialog_2 EOS ... dialog_n-1 [KNOWLEDGE] persona_1 persona_2 ... persona_n  
+таргет: ответ от пользователя
+```
+
 #### hypothesis 2 old
 ```text
 Seq2Seq:

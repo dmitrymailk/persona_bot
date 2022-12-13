@@ -34,8 +34,7 @@ class H1Seq2SeqSampleDictV2(TypedDict):
 
 class H1Seq2SeqTrainPersonaSampleV1(H1CausalTrainPersonaSampleV1):
     """
-    input_ids: all persona + history
-    labels: user response
+    hypothesis 1
     """
 
     def add_spaces_between(self, items: List[str]) -> List[str]:
@@ -109,8 +108,7 @@ class H1Seq2SeqTrainPersonaSampleV1(H1CausalTrainPersonaSampleV1):
 
 class H1Seq2SeqValidPersonaSampleV1(H1Seq2SeqTrainPersonaSampleV1):
     """
-    input_ids: all persona + history
-    labels: user response
+    hypothesis 1
     """
 
     def get_sample(self) -> H1Seq2SeqSampleDictV2:
