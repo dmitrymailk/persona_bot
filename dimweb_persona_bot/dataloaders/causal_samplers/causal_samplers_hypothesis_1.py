@@ -1,4 +1,5 @@
 from typing import Dict, TypedDict, List, Union
+import random
 
 from dimweb_persona_bot.hyperparameters.causal_modeling_hyperparameters import (
     H2PersonaChatHyperparametersV1,
@@ -112,7 +113,7 @@ class H1CausalTrainPersonaSampleV1(BaseDatasetSampleV1):
 
 class H1CausalValidPersonaSampleV1(H1CausalTrainPersonaSampleV1):
     """
-    hypothesis_1.
+    hypothesis 1.
     """
 
     def get_sample(self) -> H1CausalSampleDictV1:
@@ -168,3 +169,13 @@ class H1CausalValidPersonaSampleV1(H1CausalTrainPersonaSampleV1):
             sample_id=sample_id,
             persona=persona,
         )
+
+
+class H1CausalTrainPersonaSampleV2(H1CausalTrainPersonaSampleV1):
+    """
+    hypothesis 1.1
+    """
+
+    def get_sample(self) -> H1CausalSampleDictV1:
+        random.shuffle(self.dataset_sample["persona"])
+        return super().get_sample()
