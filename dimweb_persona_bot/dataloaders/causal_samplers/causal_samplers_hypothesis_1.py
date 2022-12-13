@@ -50,7 +50,7 @@ class H1CausalTrainPersonaSampleV1(BaseDatasetSampleV1):
         self.tokenizer = tokenizer
         self.hyperparameters = hyperparameters
 
-    def add_spaces(
+    def add_spaces_after(
         self,
         items: List[str],
     ) -> List[str]:
@@ -60,10 +60,10 @@ class H1CausalTrainPersonaSampleV1(BaseDatasetSampleV1):
     def get_sample(self) -> H1CausalSampleDictV1:
         history = self.dataset_sample["history"]
         history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
-        history = self.add_spaces(history)
+        history = self.add_spaces_after(history)
 
         persona = self.dataset_sample["persona"]
-        persona = self.add_spaces(persona)
+        persona = self.add_spaces_after(persona)
 
         encoded_history = self.tokenizer.batch_encode_plus(
             history,
@@ -98,6 +98,9 @@ class H1CausalTrainPersonaSampleV1(BaseDatasetSampleV1):
 
     @property
     def bos_token_id(self):
+        if "t5" in self.hyperparameters.model_name:
+            return []
+
         if self.tokenizer.bos_token_id is None:
             return []
 
@@ -119,11 +122,11 @@ class H1CausalValidPersonaSampleV1(H1CausalTrainPersonaSampleV1):
     def get_sample(self) -> H1CausalSampleDictV1:
         history = self.dataset_sample["history"]
         history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
-        history = self.add_spaces(history)
+        history = self.add_spaces_after(history)
 
         labels = [history.pop()]
         persona = self.dataset_sample["persona"]
-        persona = self.add_spaces(persona)
+        persona = self.add_spaces_after(persona)
         sample_id = self.dataset_sample["sample_id"]
 
         encoded_history = self.tokenizer.batch_encode_plus(
@@ -189,7 +192,7 @@ class H1CausalTrainPersonaSampleV3(H1CausalTrainPersonaSampleV1):
     def get_sample(self) -> H1CausalSampleDictV1:
         history = self.dataset_sample["history"]
         history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
-        history = self.add_spaces(history)
+        history = self.add_spaces_after(history)
 
         label = history.pop()
         random.shuffle(history)
@@ -197,7 +200,7 @@ class H1CausalTrainPersonaSampleV3(H1CausalTrainPersonaSampleV1):
 
         persona = self.dataset_sample["persona"]
         random.shuffle(persona)
-        persona = self.add_spaces(persona)
+        persona = self.add_spaces_after(persona)
 
         encoded_history = self.tokenizer.batch_encode_plus(
             history,
