@@ -51,8 +51,8 @@ def h1_experiment_1():
     ).__dict__
 
     hyperparameters = H2PersonaChatHyperparametersV1(
-        train_batch_size=32,
-        valid_batch_size=32,
+        train_batch_size=64,
+        valid_batch_size=64,
         model_name="gpt2",
         predicted_texts_folder="./predicted_texts",
         debug_status=args.debug_status,
