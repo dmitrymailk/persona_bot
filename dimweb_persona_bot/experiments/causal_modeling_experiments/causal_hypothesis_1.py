@@ -48,8 +48,8 @@ def h1_experiment_1():
     ).__dict__
 
     hyperparameters = H2PersonaChatHyperparametersV1(
-        train_batch_size=128,
-        valid_batch_size=128,
+        train_batch_size=32,
+        valid_batch_size=32,
         model_name="gpt2",
         predicted_texts_folder="./predicted_texts",
         debug_status=args.debug_status,
@@ -110,7 +110,6 @@ def h1_experiment_1():
         accelerator=accelerator,
         logger=wandb_logger.logger,
         callbacks=[checkpoint_callback],
-        strategy="dp",
         **lighting_hyperparameters,
     )
     if args.debug_status != 1:

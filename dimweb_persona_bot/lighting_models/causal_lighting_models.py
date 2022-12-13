@@ -33,6 +33,8 @@ class LightingCausalModelV1(LightningModule):
 
         self.text_evaluator = TextEvaluator()
 
+        self.custom_epoch = -1
+
         self.model = base_model
         self.database_logger = None
 
@@ -162,7 +164,7 @@ class LightingCausalModelV1(LightningModule):
         if not self.trainer.sanity_checking and self.database_logger is not None:
 
             self.database_logger.save_metrics(
-                epoch=self.current_epoch,
+                epoch=self.custom_epoch,
                 valid_loss_epoch=self.trainer.callback_metrics["valid_loss"],
                 blue_score_epoch=self.trainer.callback_metrics[
                     "valid_blue_score_epoch"
@@ -175,6 +177,8 @@ class LightingCausalModelV1(LightningModule):
                 ],
             )
 
+            self.custom_epoch += 1
+
     def save_generation_predicts(
         self,
         prediction_ids: List[str],
@@ -185,7 +189,7 @@ class LightingCausalModelV1(LightningModule):
     ):
         if not self.trainer.sanity_checking:
             run_id = wandb.run.id
-            epoch = self.current_epoch
+            epoch = self.custom_epoch
             paired_texts = []
             for label, generated_text, input_token, prediction_id, persona_item in zip(
                 decoded_labels,
@@ -237,7 +241,7 @@ class LightingCausalModelV1(LightningModule):
 
     def on_save_checkpoint(self, checkpoint):
         super().on_save_checkpoint(checkpoint)
-        epoch = self.current_epoch
+        epoch = self.custom_epoch
         wandb_run_id = wandb.run.id
         main_path = "./models"
 
