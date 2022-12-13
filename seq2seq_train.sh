@@ -1,3 +1,6 @@
+export CUDA_VISIBLE_DEVICES="$(cat cuda_devices)"
+echo "CUDA_VISIBLE_DEVICES: $CUDA_VISIBLE_DEVICES"
+
 training_script=dimweb_persona_bot.train_scripts.seq2seq_training
 
 train_status=0

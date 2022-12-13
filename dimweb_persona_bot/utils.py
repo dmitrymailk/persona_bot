@@ -137,5 +137,5 @@ class WandbLoggerV2:
 def setup_gpus():
     if os.getlogin() != "dimweb":
         os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-        cuda_devices = ",".join(open("./cuda_devices", "r").read().split(" "))
+        cuda_devices = ",".join(open("./cuda_devices", "r").read().split(","))
         os.environ["CUDA_VISIBLE_DEVICES"] = cuda_devices
