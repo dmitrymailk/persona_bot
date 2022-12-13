@@ -48,8 +48,8 @@ def h1_experiment_1():
     ).__dict__
 
     hyperparameters = H2PersonaChatHyperparametersV1(
-        train_batch_size=32,
-        valid_batch_size=64,
+        train_batch_size=16,
+        valid_batch_size=32,
         model_name="microsoft/GODEL-v1_1-base-seq2seq",
         predicted_texts_folder="./predicted_texts",
         debug_status=args.debug_status,
