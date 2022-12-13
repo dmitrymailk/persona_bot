@@ -39,7 +39,9 @@ class H1Seq2SeqTrainPersonaSampleV1(H1CausalTrainPersonaSampleV1):
     """
 
     def add_spaces_between(self, items: List[str]) -> List[str]:
-        return " ".join(items)
+        items = self.add_spaces_after(items)
+        items[-1] = items[-1].strip()
+        return items
 
     def __init__(
         self,
@@ -77,7 +79,7 @@ class H1Seq2SeqTrainPersonaSampleV1(H1CausalTrainPersonaSampleV1):
         encoded_persona = flat_list(encoded_persona["input_ids"])
 
         encoded_labels = self.tokenizer.batch_encode_plus(
-            [labels],
+            labels,
             add_special_tokens=False,
             truncation=True,
             max_length=self.hyperparameters.chat_max_length,
@@ -89,12 +91,12 @@ class H1Seq2SeqTrainPersonaSampleV1(H1CausalTrainPersonaSampleV1):
             *self.bos_token_id,
             *encoded_persona,
             *encoded_history,
-            self.eos_token_id,
+            *self.eos_token_id,
         ]
         labels = [
             *self.bos_token_id,
             *encoded_labels,
-            self.eos_token_id,
+            *self.eos_token_id,
         ]
         attention_mask = [1] * len(input_ids)
 
@@ -113,7 +115,7 @@ class H1Seq2SeqValidPersonaSampleV1(H1Seq2SeqTrainPersonaSampleV1):
 
     def get_sample(self) -> H1Seq2SeqSampleDictV2:
         persona = self.dataset_sample["persona"]
-        persona = "".join(self.add_spaces_after(persona))
+        persona = self.add_spaces_after(persona)
         sample_id = self.dataset_sample["sample_id"]
 
         sample = super().get_sample()

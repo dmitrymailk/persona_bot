@@ -20,6 +20,13 @@ def flat_list(list_of_lists: List[List]) -> List:
     return list(chain.from_iterable(list_of_lists))
 
 
+def setup_gpus():
+    if os.getlogin() != "dimweb":
+        os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+        cuda_devices = ",".join(open("./cuda_devices", "r").read().split(","))
+        os.environ["CUDA_VISIBLE_DEVICES"] = cuda_devices
+
+
 class TextEvaluator:
     def __init__(self):
         self.rouge = rouge_scorer.RougeScorer(["rougeL"], use_stemmer=True)
@@ -97,6 +104,8 @@ class ExperimentArgumentParserV1:
 
         self.args = args
 
+        setup_gpus()
+
 
 class WandbLoggerV1:
     def __init__(
@@ -132,10 +141,3 @@ class WandbLoggerV2:
             notes=self.notes,
             tags=self.tags,
         )
-
-
-def setup_gpus():
-    if os.getlogin() != "dimweb":
-        os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-        cuda_devices = ",".join(open("./cuda_devices", "r").read().split(","))
-        os.environ["CUDA_VISIBLE_DEVICES"] = cuda_devices

@@ -5,7 +5,7 @@ from dimweb_persona_bot.dataloaders.seq2seq_samplers.seq2seq_samplers_hypothesis
 )
 from dimweb_persona_bot.dataloaders.lighting import LightningDataModuleV1
 from dimweb_persona_bot.hyperparameters.causal_modeling_hyperparameters import (
-    H1PersonaChatHyperparametersV1,
+    H2PersonaChatHyperparametersV1,
 )
 from dimweb_persona_bot.hyperparameters.lighting import H1LightingHyperparametersV1
 from dimweb_persona_bot.utils import (
@@ -43,7 +43,7 @@ def h1_experiment_1():
         max_epochs=max_epochs,
     ).__dict__
 
-    hyperparameters = H1PersonaChatHyperparametersV1(
+    hyperparameters = H2PersonaChatHyperparametersV1(
         train_batch_size=8,
         valid_batch_size=16,
         model_name="facebook/bart-base",
@@ -55,8 +55,6 @@ def h1_experiment_1():
     tokenizer = AutoTokenizer.from_pretrained(hyperparameters.model_name)
 
     accelerator = "gpu"
-    if args.debug_status == 1:
-        accelerator = "cpu"
 
     device = "cuda" if accelerator == "gpu" else "cpu"
 
