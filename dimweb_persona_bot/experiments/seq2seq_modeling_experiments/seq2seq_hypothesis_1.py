@@ -42,7 +42,7 @@ def h1_experiment_1():
         max_epochs = 2
     devices = [args.cuda_device]
     lighting_hyperparameters = H1LightingHyperparametersV1(
-        precision=16,
+        precision=32,
         devices=devices,
         max_epochs=max_epochs,
     ).__dict__
