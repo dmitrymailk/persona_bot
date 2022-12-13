@@ -3,6 +3,7 @@ from dimweb_persona_bot.dataloaders.causal_samplers.causal_samplers_hypothesis_1
     H1CausalTrainPersonaSampleV1,
     H1CausalValidPersonaSampleV1,
     H1CausalTrainPersonaSampleV2,
+    H1CausalTrainPersonaSampleV3,
 )
 from dimweb_persona_bot.dataloaders.lighting import LightningDataModuleV1
 from dimweb_persona_bot.hyperparameters.causal_modeling_hyperparameters import (
@@ -75,7 +76,7 @@ def h1_experiment_1():
         hyperparameters=hyperparameters,
         tags=[
             "causal_modeling",
-            "hypothesis_1_1",
+            "hypothesis_1_2",
             "persona_bot_2",
         ],
     )

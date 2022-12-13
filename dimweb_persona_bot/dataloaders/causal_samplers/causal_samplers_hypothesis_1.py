@@ -179,3 +179,53 @@ class H1CausalTrainPersonaSampleV2(H1CausalTrainPersonaSampleV1):
     def get_sample(self) -> H1CausalSampleDictV1:
         random.shuffle(self.dataset_sample["persona"])
         return super().get_sample()
+
+
+class H1CausalTrainPersonaSampleV3(H1CausalTrainPersonaSampleV1):
+    """
+    hypothesis 1.2
+    """
+
+    def get_sample(self) -> H1CausalSampleDictV1:
+        history = self.dataset_sample["history"]
+        history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
+        history = self.add_spaces(history)
+
+        label = history.pop()
+        random.shuffle(history)
+        history.append(label)
+
+        persona = self.dataset_sample["persona"]
+        random.shuffle(persona)
+        persona = self.add_spaces(persona)
+
+        encoded_history = self.tokenizer.batch_encode_plus(
+            history,
+            add_special_tokens=False,
+            truncation=True,
+            max_length=self.hyperparameters.chat_max_length,
+        )
+        encoded_history = flat_list(encoded_history["input_ids"])
+
+        encoded_persona = self.tokenizer.batch_encode_plus(
+            persona,
+            add_special_tokens=False,
+            truncation=True,
+            max_length=self.hyperparameters.persona_max_length,
+        )
+
+        encoded_persona = flat_list(encoded_persona["input_ids"])
+
+        input_ids = [
+            *self.bos_token_id,
+            *encoded_persona,
+            *encoded_history,
+            *self.eos_token_id,
+        ]
+        attention_mask = [1] * len(input_ids)
+
+        return H1CausalSampleDictV1(
+            input_ids=input_ids,
+            labels=input_ids,
+            attention_mask=attention_mask,
+        )
