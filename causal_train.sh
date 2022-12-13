@@ -37,8 +37,8 @@ if [ $cuda_device -eq -1 ]; then
     echo "Please specify the cuda device"
     exit 1
 # compare $cuda_device with string "all"
-elif [ $cuda_device -eq -2 ]; then
-    cuda_device=-1
+# elif [ $cuda_device -eq -2 ]; then
+#     cuda_device=-1
 fi
 
 
