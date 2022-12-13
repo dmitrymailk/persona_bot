@@ -36,7 +36,7 @@ class H2Seq2SeqTrainPersonaSampleV1(H1Seq2SeqTrainPersonaSampleV1):
     """
 
     def add_sep_beetween(self, items: List[str], sep=" EOS ") -> List[str]:
-        for i in range(1, len(items), 2):
+        for i in range(1, len(items)):
             items[i] = sep + items[i]
 
         return items
