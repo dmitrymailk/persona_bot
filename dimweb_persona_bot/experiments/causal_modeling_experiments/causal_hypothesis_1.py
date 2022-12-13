@@ -41,10 +41,13 @@ def h1_experiment_1():
     if args.debug_status == 1:
         max_epochs = 2
 
+    devices = [args.cuda_device]
+
     lighting_hyperparameters = H1LightingHyperparametersV1(
         precision=16,
         # accumulate_grad_batches=3,
         max_epochs=max_epochs,
+        devices=devices,
     ).__dict__
 
     hyperparameters = H2PersonaChatHyperparametersV1(
