@@ -88,7 +88,7 @@ def h1_experiment_1():
         tokenizer=tokenizer,
         base_train_dataset_class=PersonaChatDatasetV1,
         base_valid_dataset_class=PersonaChatDatasetV1,
-        base_train_sample_class=H1CausalTrainPersonaSampleV2,
+        base_train_sample_class=H1CausalTrainPersonaSampleV3,
         base_valid_sample_class=H1CausalValidPersonaSampleV1,
         debug_status=args.debug_status,
         device=device,
