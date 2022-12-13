@@ -62,7 +62,11 @@ def h1_experiment_1():
 
     wandb_logger = WandbLoggerV2(
         hyperparameters=hyperparameters,
-        tags=["seq2seq_modeling", "experiment_1"],
+        tags=[
+            "seq2seq_modeling",
+            "hypothesis_1",
+            "persona_bot_2",
+        ],
     )
 
     data_module = LightningDataModuleV1(
