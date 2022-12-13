@@ -42,7 +42,7 @@ def h1_experiment_1():
         max_epochs = 2
     devices = [args.cuda_device]
     lighting_hyperparameters = H1LightingHyperparametersV1(
-        precision=32,
+        precision=16,
         devices=devices,
         max_epochs=max_epochs,
     ).__dict__
@@ -50,7 +50,7 @@ def h1_experiment_1():
     hyperparameters = H2PersonaChatHyperparametersV1(
         train_batch_size=32,
         valid_batch_size=64,
-        model_name="microsoft/GODEL-v1_1-base-seq2seq",
+        model_name="facebook/bart-base",
         predicted_texts_folder="./predicted_texts",
         debug_status=args.debug_status,
         model_architecture="seq2seq",
