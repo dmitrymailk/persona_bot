@@ -26,8 +26,8 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 
 def h1_experiment_1():
     """
-    - t5-base - ошибка nan (устранена на fp32)
     - facebook/bart-base
+    - t5-base - ошибка nan (устранена на fp32)
     - microsoft/GODEL-v1_1-base-seq2seq
     """
     parser = ExperimentArgumentParserV1()
@@ -36,10 +36,10 @@ def h1_experiment_1():
     max_epochs = 4
     if args.debug_status == 1:
         max_epochs = 2
-
+    devices = [args.cuda_device]
     lighting_hyperparameters = H1LightingHyperparametersV1(
         precision=16,
-        # accumulate_grad_batches=3,
+        devices=devices,
         max_epochs=max_epochs,
     ).__dict__
 
