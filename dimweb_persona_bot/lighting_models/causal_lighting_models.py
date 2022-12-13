@@ -103,7 +103,7 @@ class LightingCausalModelV1(LightningModule):
         self.save_generation_predicts(
             prediction_ids=batch["sample_id"],
             decoded_labels=decoded_labels,
-            cut_generated_tokens=cut_generated_tokens,
+            generated_tokens=cut_generated_tokens,
             input_tokens=input_tokens,
             persona=batch["persona"],
         )
@@ -184,7 +184,7 @@ class LightingCausalModelV1(LightningModule):
         prediction_ids: List[str],
         persona: List[str],
         decoded_labels: List[str],
-        cut_generated_tokens: List[str],
+        generated_tokens: List[str],
         input_tokens: List[str],
     ):
         if not self.trainer.sanity_checking:
@@ -193,7 +193,7 @@ class LightingCausalModelV1(LightningModule):
             paired_texts = []
             for label, generated_text, input_token, prediction_id, persona_item in zip(
                 decoded_labels,
-                cut_generated_tokens,
+                generated_tokens,
                 input_tokens,
                 prediction_ids,
                 persona,
