@@ -1,4 +1,5 @@
 from typing import TypedDict, List
+import random
 
 from dimweb_persona_bot.hyperparameters.causal_modeling_hyperparameters import (
     H1PersonaChatHyperparametersV1,
@@ -127,6 +128,16 @@ class H2Seq2SeqValidPersonaSampleV1(H2Seq2SeqTrainPersonaSampleV1):
             sample_id=sample_id,
             persona=persona,
         )
+
+
+class H2Seq2SeqTrainPersonaSampleV2(H2Seq2SeqTrainPersonaSampleV1):
+    """
+    hypothesis 2.1
+    """
+
+    def get_sample(self) -> H1Seq2SeqSampleDictV1:
+        random.shuffle(self.dataset_sample["persona"])
+        return super().get_sample()
 
 
 class H2Seq2SeqInferencePersonaSampleV1(H2Seq2SeqTrainPersonaSampleV1):

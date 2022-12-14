@@ -38,6 +38,12 @@ Seq2Seq:
 таргет: ответ от пользователя
 ```
 
+#### hypothesis 2.1
+
+```text
+как hypothesis 2, только перемешивать персону при трейне
+```
+
 #### hypothesis 2 old
 ```text
 Seq2Seq:
