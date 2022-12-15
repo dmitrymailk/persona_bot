@@ -17,3 +17,5 @@
 - [open domain вопросы для бота](https://github.com/vladislavneon/RuBQ/tree/master/RuBQ_2.0)
 - [датасет с мемами и их тектовым описанием](https://t.me/lovedeathtransformers/4792)
 - [новости с панорамы](https://huggingface.co/datasets/its5Q/panorama) - заголовок и текст новости
+- [russian super glue](https://russiansuperglue.com/leaderboard/2)
+- [набор субтитров из фильмов](https://opus.nlpl.eu/OpenSubtitles-v2018.php)
