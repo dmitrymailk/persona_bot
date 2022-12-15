@@ -13,7 +13,7 @@ from dimweb_persona_bot.dataloaders.persona_chat_dataloaders import (
 from dimweb_persona_bot.hyperparameters.causal_modeling_hyperparameters import (
     H2PersonaChatHyperparametersV1,
 )
-
+from dimweb_persona_bot.utils import setup_gpus
 import torch
 
 
@@ -37,6 +37,8 @@ class DialogBotV1:
         self.hyperparameters = hyperparameters
         self.device = device
         self.shuffle_persona = shuffle_persona
+
+        self.debug_status = hyperparameters.debug_status
 
         if history is None:
             self.history = []
@@ -136,12 +138,22 @@ class DialogBotV1:
         return self.model.generate(**sample, max_length=20)
 
     def start_chat(self):
+        if self.debug_status == 1:
+            print(f"PERSONA: {self.persona}")
+
         while True:
             message = input("You: ")
+
+            if self.debug_status == 1:
+                print("-" * 100)
 
             if message == "exit":
                 break
             answer = self.chat(message)
+
+            if self.debug_status:
+                print("CONTEXT:", self.history)
+
             print("Bot:", answer)
 
 
@@ -154,28 +166,25 @@ class DialogBotV2(DialogBotV1):
         return self.model.generate(
             **sample,
             max_new_tokens=60,
-            penalty_alpha=0.3,
-            top_k=20,
-            top_p=0.97,
+            penalty_alpha=0.15,
+            top_k=10,
         )
 
 
-def chat_with_bot_v2_console():
-    if os.getlogin() != "dimweb":
-        os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-        cuda_devices = ",".join(open("./cuda_devices", "r").read().split(" "))
-        os.environ["CUDA_VISIBLE_DEVICES"] = cuda_devices
+def chat_with_model_persona_bot_2_28akcwik():
+    setup_gpus()
+    model_path = "dim/persona_bot_2_28akcwik"
+    device = "cuda"
 
-    model_name = "./models/2vabb4b2/"
-    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-    device = "cuda:0"
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
     model.to(device)
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
+
     hyperparameters = H2PersonaChatHyperparametersV1(
-        model_architecture="seq2seq",
-        chat_history_pair_length=3,
-        persona_max_length=31,
-        chat_max_length=166,
+        chat_history_pair_length=7,
+        persona_max_length=14,
+        chat_max_length=25,
+        debug_status=1,
     )
 
     bot2 = DialogBotV2(
@@ -184,14 +193,17 @@ def chat_with_bot_v2_console():
         hyperparameters=hyperparameters,
         history=[],
         persona=[
-            "Я студент 4 курса.",
-            "Люблю иногда бухать по пятницам.",
-            "У меня нет девушки.",
-            "Люблю писать код.",
+            "i'm also a graduate student .",
+            "i enjoy reading journals and guides related to psychology .",
+            "my parents taught me survival skills .",
+            "i walk dogs for a living .",
         ],
     )
+
     bot2.start_chat()
 
 
 if __name__ == "__main__":
-    chat_with_bot_v2_console()
+    # python -m dimweb_persona_bot.inference.seq2seq_bots
+    setup_gpus()
+    chat_with_model_persona_bot_2_28akcwik()

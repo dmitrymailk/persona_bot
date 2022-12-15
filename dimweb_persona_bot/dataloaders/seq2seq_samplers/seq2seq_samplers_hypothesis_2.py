@@ -82,8 +82,7 @@ class H2Seq2SeqTrainPersonaSampleV1(H1Seq2SeqTrainPersonaSampleV1):
             truncation=True,
             max_length=self.hyperparameters.chat_max_length,
         )
-        "i am good, i just got off work and tired, i have</s>"
-        "[CONTEXT] hello what are doing today? [KNOWLEDGE] i read twenty books a year. i'm a stunt double as my second job. i only eat kosher. i was raised in a single parent household.</s>"
+
         encoded_labels = flat_list(encoded_labels["input_ids"])
 
         input_ids = [
@@ -142,19 +141,21 @@ class H2Seq2SeqTrainPersonaSampleV2(H2Seq2SeqTrainPersonaSampleV1):
 
 class H2Seq2SeqInferencePersonaSampleV1(H2Seq2SeqTrainPersonaSampleV1):
     def get_sample(self) -> H2Seq2SeqInferenceSampleDictV1:
+
         history = self.dataset_sample["history"]
-        history = history[-self.hyperparameters.chat_history_pair_length * 2 :]
+        history = history[-self.hyperparameters.chat_history_pair_length * 2 - 1 :]
+        history = self.add_sep_beetween(history)
+
         persona = self.dataset_sample["persona"]
+        persona = self.add_spaces_between(persona)
 
-        encoded_persona = self.tokenizer.batch_encode_plus(
-            persona,
+        KNOWLEDGE_IDS = self.tokenizer.encode(
+            " [KNOWLEDGE] ",
             add_special_tokens=False,
-            truncation=True,
-            max_length=self.hyperparameters.persona_max_length,
         )
-
-        encoded_persona = self._add_sep_token_persona(
-            input_ids=encoded_persona["input_ids"],
+        CONTEXT_IDS = self.tokenizer.encode(
+            " [CONTEXT] ",
+            add_special_tokens=False,
         )
 
         encoded_history = self.tokenizer.batch_encode_plus(
@@ -163,19 +164,24 @@ class H2Seq2SeqInferencePersonaSampleV1(H2Seq2SeqTrainPersonaSampleV1):
             truncation=True,
             max_length=self.hyperparameters.chat_max_length,
         )
-        encoded_history = self._add_sep_token_chat_train(
-            input_ids=encoded_history["input_ids"],
+        encoded_history = flat_list(encoded_history["input_ids"])
+
+        encoded_persona = self.tokenizer.batch_encode_plus(
+            persona,
+            add_special_tokens=False,
+            truncation=True,
+            max_length=self.hyperparameters.persona_max_length,
         )
 
-        bos_token = self.get_bos_token_id()
+        encoded_persona = flat_list(encoded_persona["input_ids"])
 
         input_ids = [
-            *bos_token,
-            self.persona_id,
-            *encoded_persona,
-            self.chat_id,
+            *self.bos_token_id,
+            *CONTEXT_IDS,
             *encoded_history,
-            self.tokenizer.eos_token_id,
+            *KNOWLEDGE_IDS,
+            *encoded_persona,
+            *self.eos_token_id,
         ]
 
         attention_mask = [1] * len(input_ids)
