@@ -6,3 +6,5 @@ wandb==0.13.5
 datasets==2.4.0
 rouge-score==0.0.4
 torchmetrics==0.7.0
+bitsandbytes==0.35.4
+accelerate==0.15.0

@@ -1,0 +1,1 @@
+nohup python -m dimweb_persona_bot.inference.bart_persona.app &
