@@ -35,6 +35,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 def h3_experiment_1():
     """
     - facebook/mbart-large-50
+    - facebook/bart-base
     """
     parser = ExperimentArgumentParserV1()
     args: TrainArgumentsV1 = parser.args
@@ -52,7 +53,7 @@ def h3_experiment_1():
     hyperparameters = H2PersonaChatHyperparametersV1(
         train_batch_size=16,
         valid_batch_size=32,
-        model_name="facebook/mbart-large-50",
+        model_name="facebook/bart-base",
         predicted_texts_folder="./predicted_texts",
         debug_status=args.debug_status,
         model_architecture="seq2seq",
