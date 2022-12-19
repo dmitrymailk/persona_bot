@@ -16,7 +16,7 @@ def ru_persona_chat_dataset_tranformer_v1(
     assert output_folder is not None, "output_folder is None"
 
     dataset = pd.read_csv(initial_dataset_path, sep="\t")
-    split_ratio = int(len(dataset) * 0.92)
+    split_ratio = int(len(dataset) * 0.95)
     train_dataset = dataset[:split_ratio]
     valid_dataset = dataset[split_ratio:]
 

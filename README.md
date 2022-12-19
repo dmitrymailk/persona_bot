@@ -47,14 +47,9 @@ Seq2Seq:
 #### hypothesis 3
 - русский бот
 ```text
-исходный русский датасет от маркова.
-В этом датасете не понятно что есть ответ от пользователя. каждое предложение разделено новой строкой. поэтому я буду брать четные строки как ответы, а нечетные как вопросы.(первая строка - вопрос, вторая - ответ и т.д.)
-
-Seq2Seq:
-входная последовательность: [CONTEXT] dialog_1 EOS dialog_2 EOS ... dialog_n-1  
-таргет: ответ от пользователя
+исходный русский ru persona chat.
+все остальное как в hypothesis 2.1
 ```
-
 - [package project](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
 - [install project from git](https://stackoverflow.com/questions/15268953/how-to-install-python-package-from-github)
 
