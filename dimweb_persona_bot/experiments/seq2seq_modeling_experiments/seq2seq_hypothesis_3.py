@@ -113,7 +113,6 @@ def h3_experiment_1():
         accelerator=accelerator,
         logger=wandb_logger.logger,
         callbacks=[checkpoint_callback],
-        strategy="colossalai",
         **lighting_hyperparameters,
     )
     if args.debug_status != 1:

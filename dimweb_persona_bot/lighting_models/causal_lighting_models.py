@@ -145,16 +145,16 @@ class LightingCausalModelV1(LightningModule):
             },
         ]
 
-        # optimizer = torch.optim.AdamW(
-        #     optimizer_grouped_parameters,
-        #     lr=self.hyperparameters.learning_rate,
-        #     eps=self.hyperparameters.adam_epsilon,
-        # )
-        optimizer = HybridAdam(
+        optimizer = torch.optim.AdamW(
             optimizer_grouped_parameters,
             lr=self.hyperparameters.learning_rate,
             eps=self.hyperparameters.adam_epsilon,
         )
+        # optimizer = HybridAdam(
+        #     optimizer_grouped_parameters,
+        #     lr=self.hyperparameters.learning_rate,
+        #     eps=self.hyperparameters.adam_epsilon,
+        # )
 
         scheduler = get_linear_schedule_with_warmup(
             optimizer,
