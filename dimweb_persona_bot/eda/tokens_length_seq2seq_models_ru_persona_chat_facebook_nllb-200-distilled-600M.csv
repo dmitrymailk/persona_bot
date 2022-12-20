@@ -1,0 +1,5 @@
+field,model,95%,stage
+persona,facebook/nllb-200-distilled-600M,10.0,train
+history,facebook/nllb-200-distilled-600M,47.0,train
+persona,facebook/nllb-200-distilled-600M,10.0,valid
+history,facebook/nllb-200-distilled-600M,45.0,valid

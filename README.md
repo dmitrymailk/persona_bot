@@ -50,6 +50,15 @@ Seq2Seq:
 исходный русский ru persona chat.
 все остальное как в hypothesis 2.1
 ```
+
+#### hypothesis 4
+- русский бот
+```text
+все как в hypothesis 3. только теперь брать обе персоны и менять диалоги местами.
+
+так как у нас есть 2 персоны, то мы можем использовать персону при трейне с 2 сторон. С другой стороны может возникнуть утечка данных, то есть когда даже я не буду прописывать вторую персону для ответа, модель как бы будет о ней знать, потому что она раньше видела ее, но с другой стороны.
+```
+
 - [package project](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
 - [install project from git](https://stackoverflow.com/questions/15268953/how-to-install-python-package-from-github)
 
