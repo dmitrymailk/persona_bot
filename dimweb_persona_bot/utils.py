@@ -38,6 +38,8 @@ class TextEvaluator:
         generated_texts: List[str],
         original_texts: List[str],
     ):
+        original_texts = [item if item != "" else " " for item in original_texts]
+
         blue_score = self.bleu.compute(
             predictions=generated_texts,
             references=[[item] for item in original_texts],
