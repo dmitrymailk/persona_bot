@@ -79,8 +79,8 @@ def h3_experiment_1():
     )
 
     data_module = LightningDataModuleV1(
-        train_path_dataset="./datasets/persona_chat/train.json",
-        valid_path_dataset="./datasets/persona_chat/valid.json",
+        train_path_dataset="./datasets/ru_persona_chat/train.csv",
+        valid_path_dataset="./datasets/ru_persona_chat/valid.csv",
         hyperparameters=hyperparameters,
         tokenizer=tokenizer,
         base_train_dataset_class=RUPersonaChatDatasetV1,
@@ -113,6 +113,7 @@ def h3_experiment_1():
         accelerator=accelerator,
         logger=wandb_logger.logger,
         callbacks=[checkpoint_callback],
+        strategy="colossalai",
         **lighting_hyperparameters,
     )
     if args.debug_status != 1:
