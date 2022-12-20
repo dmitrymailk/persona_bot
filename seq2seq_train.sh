@@ -29,7 +29,7 @@ train() {
     fi
 
     train_log_path=seq2seq_model_$(date +"%d.%m.%Y_%H:%M:%S").log
-    CUDA_VISIBLE_DEVICES="$(cat cuda_devices)" nohup python -m $training_script --cuda_device $1 > ./training_logs/seq2seq_model/$train_log_path &
+    nohup python -m $training_script --cuda_device $1 > ./training_logs/seq2seq_model/$train_log_path &
 }
 
 # clear dir
