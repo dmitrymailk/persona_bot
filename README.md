@@ -60,3 +60,7 @@ python3 -m build
 ```bash
 twine upload dist/*
 ```
+
+```bash
+du -sh -- *
+```
