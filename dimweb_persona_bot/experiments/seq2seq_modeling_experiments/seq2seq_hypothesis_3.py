@@ -36,7 +36,7 @@ def h3_experiment_1():
     """
     - facebook/mbart-large-50
     - sberbank-ai/ruT5-base
-    - sberbank-ai/ruT5-large
+    - facebook/nllb-200-distilled-600M
     """
     parser = ExperimentArgumentParserV1()
     args: TrainArgumentsV1 = parser.args
@@ -46,7 +46,7 @@ def h3_experiment_1():
         max_epochs = 2
     devices = [args.cuda_device]
     lighting_hyperparameters = H1LightingHyperparametersV1(
-        precision=32,
+        precision=16,
         devices=devices,
         max_epochs=max_epochs,
     ).__dict__
@@ -54,12 +54,12 @@ def h3_experiment_1():
     hyperparameters = H2PersonaChatHyperparametersV1(
         train_batch_size=16,
         valid_batch_size=32,
-        model_name="sberbank-ai/ruT5-large",
+        model_name="facebook/nllb-200-distilled-600M",
         predicted_texts_folder="./predicted_texts",
         debug_status=args.debug_status,
         model_architecture="seq2seq",
         persona_max_length=10,
-        chat_max_length=40,
+        chat_max_length=47,
         chat_history_pair_length=4,
     )
 
