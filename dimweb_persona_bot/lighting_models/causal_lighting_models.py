@@ -8,7 +8,6 @@ from dimweb_persona_bot.utils import TextEvaluator
 from dimweb_persona_bot.database_logger.logger import DatabaseLoggerV1
 
 from pytorch_lightning import LightningModule
-from colossalai.nn.optimizer import HybridAdam
 
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers.optimization import get_linear_schedule_with_warmup
