@@ -53,7 +53,7 @@ def h3_experiment_1():
     hyperparameters = H2PersonaChatHyperparametersV1(
         train_batch_size=16,
         valid_batch_size=32,
-        model_name="facebook/bart-base",
+        model_name="facebook/mbart-large-50",
         predicted_texts_folder="./predicted_texts",
         debug_status=args.debug_status,
         model_architecture="seq2seq",
@@ -93,8 +93,6 @@ def h3_experiment_1():
 
     base_model = AutoModelForSeq2SeqLM.from_pretrained(
         hyperparameters.model_name,
-        device_map="auto",
-        load_in_8bit=True,
     )
 
     model = LightingSeq2SeqModelV1(
@@ -115,6 +113,7 @@ def h3_experiment_1():
         accelerator=accelerator,
         logger=wandb_logger.logger,
         callbacks=[checkpoint_callback],
+        strategy="colossalai",
         **lighting_hyperparameters,
     )
     if args.debug_status != 1:
