@@ -15,9 +15,14 @@ class DatabaseAnalyzerV1:
             host=host,
             port=port,
         )
-        self.get_random_row = """
+
+    def get_random_row(
+        self,
+        wandb_run_id: str,
+    ):
+        return f"""
         WITH random_row AS (
-            SELECT * FROM model_prediction_v1 ORDER BY random() LIMIT 1
+            SELECT * FROM model_prediction_v1 WHERE wandb_run_id = '{wandb_run_id}' ORDER BY random() LIMIT 1 
         )
         SELECT * FROM random_row;
         """
@@ -35,7 +40,7 @@ class DatabaseAnalyzerV1:
             "actual_response",
         ],
     ):
-        random_row = self.db.execute_sql(self.get_random_row)
+        random_row = self.db.execute_sql(self.get_random_row(wandb_run_id))
         random_row = random_row[0][1]
 
         data_1 = (
@@ -81,7 +86,11 @@ class DatabaseAnalyzerV1:
         """
         data = []
         for _ in range(samples_amount):
-            random_row = self.db.execute_sql(self.get_random_row)
+            random_row = self.db.execute_sql(
+                self.get_random_row(
+                    wandb_run_id=wandb_run_id,
+                )
+            )
             random_row = random_row[0][1]
 
             data_1 = (
