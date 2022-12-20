@@ -15,7 +15,6 @@ from transformers.optimization import get_linear_schedule_with_warmup
 import torch
 
 import wandb
-from colossalai.nn.optimizer import HybridAdam
 
 
 class LightingCausalModelV1(LightningModule):
@@ -145,12 +144,7 @@ class LightingCausalModelV1(LightningModule):
             },
         ]
 
-        # optimizer = torch.optim.AdamW(
-        #     optimizer_grouped_parameters,
-        #     lr=self.hyperparameters.learning_rate,
-        #     eps=self.hyperparameters.adam_epsilon,
-        # )
-        optimizer = HybridAdam(
+        optimizer = torch.optim.AdamW(
             optimizer_grouped_parameters,
             lr=self.hyperparameters.learning_rate,
             eps=self.hyperparameters.adam_epsilon,
