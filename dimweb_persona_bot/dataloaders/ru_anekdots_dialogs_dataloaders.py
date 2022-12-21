@@ -3,15 +3,15 @@ from dimweb_persona_bot.dataloaders.datasets import (
     BaseDialogSampleV1,
 )
 from typing import List
-import pandas as pd
 
 
-class RUCornellMovieCorpusV1(BaseInitialDatasetV1):
+class RUAnekdotsDialogsV1(BaseInitialDatasetV1):
     def _create_initial_dataset(self, initial_dataset) -> List[BaseDialogSampleV1]:
         dataset = []
 
         for dialog_id, dialog in enumerate(initial_dataset.split("\n\n\n\n")):
             dialog = dialog.split("\n")
+            dialog = [self.filter_sentences(sentence) for sentence in dialog]
 
             for i in range(1, len(dialog) // 2 + 1):
                 context = dialog[: i * 2]
@@ -19,7 +19,7 @@ class RUCornellMovieCorpusV1(BaseInitialDatasetV1):
                     context=context,
                     knowledge="",
                     sample_id=f"{dialog_id}_0_{i}",
-                    dataset_source="RUCornellMovieCorpusV1",
+                    dataset_source="RUAnekdotsDialogsV1",
                 )
                 dataset.append(sample)
 
@@ -30,7 +30,7 @@ class RUCornellMovieCorpusV1(BaseInitialDatasetV1):
                     context=context,
                     knowledge="",
                     sample_id=f"{dialog_id}_1_{i}",
-                    dataset_source="RUCornellMovieCorpusV1",
+                    dataset_source="RUAnekdotsDialogsV1",
                 )
                 dataset.append(sample)
 
@@ -39,3 +39,7 @@ class RUCornellMovieCorpusV1(BaseInitialDatasetV1):
     def _read_dataset(self, input_path: str) -> str:
         # small dataset
         return open(input_path).read()
+
+    def filter_sentences(self, sentence: str):
+        sentence = sentence.replace("- ", "")
+        return sentence
