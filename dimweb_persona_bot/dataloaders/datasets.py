@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, TypedDict
+from typing import List, Dict, Any, TypedDict, Optional
 from abc import ABC, abstractmethod
 import json
 
@@ -41,6 +41,7 @@ class BaseDialogSampleV1(TypedDict):
     knowledge: List[str]
     sample_id: str
     dataset_source: str
+    label: Optional[str]
 
 
 class BaseInitialDatasetV1(AbstractInitialDataset):
