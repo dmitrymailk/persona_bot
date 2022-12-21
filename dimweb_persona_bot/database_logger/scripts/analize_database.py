@@ -160,3 +160,59 @@ class DatabaseAnalyzerV1:
         data = pd.concat(data)
         data[columns].to_csv(table_save_path, index=False)
         return data[columns]
+
+    def get_sample_with_metrics_by_wandb_run_id(
+        self,
+        wandb_run_ids: list,
+        table_save_path: str = "./temp.csv",
+        columns: List[str] = [
+            "wandb_run_id",
+            "model_name",
+            "prediction_id",
+            "epoch",
+            "context",
+            "model_prediction",
+            "actual_response",
+            "valid_loss_epoch",
+            "blue_score_epoch",
+            "rougel_score_epoch",
+            "charf_score_epoch",
+        ],
+        amount: int = 10,
+    ):
+        """
+        возвращает случайные предикты среди всех моделей
+        """
+
+        random_samples_ids = [
+            self.db.execute_sql(self.get_random_row(wandb_run_id=wandb_run_ids[0],))[
+                0
+            ][1]
+            for _ in range(amount)
+        ]
+
+        data = []
+        for sample_id in random_samples_ids:
+            for wandb_run_id in wandb_run_ids:
+                data_1 = (
+                    ModelPredictionV1.select(ModelPredictionV1, ModelMetricsV1)
+                    .join(
+                        ModelMetricsV1,
+                        pw.JOIN.INNER,
+                        on=(ModelMetricsV1.epoch == ModelPredictionV1.epoch),
+                    )
+                    .where(
+                        (ModelMetricsV1.wandb_run_id == wandb_run_id)
+                        & (ModelPredictionV1.wandb_run_id == wandb_run_id)
+                        & (ModelPredictionV1.prediction_id == sample_id)
+                    )
+                    .order_by(ModelPredictionV1.id)
+                    .dicts()
+                )
+
+                data_2 = pd.DataFrame.from_records(data_1)
+                data.append(data_2)
+
+        data = pd.concat(data)
+        data[columns].to_csv(table_save_path, index=False)
+        return data[columns]
