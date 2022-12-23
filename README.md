@@ -59,9 +59,15 @@ Seq2Seq:
 так как у нас есть 2 персоны, то мы можем использовать персону при трейне с 2 сторон. С другой стороны может возникнуть утечка данных, то есть когда даже я не буду прописывать вторую персону для ответа, модель как бы будет о ней знать, потому что она раньше видела ее, но с другой стороны.
 ```
 
-# Russian bot
+# hypothesis 5
+- русский бот
 - [ru_persona_chat]
 - [cornell_movie_corpus]
+- [ru_anekdots_dialogs]
+- [flibusta_dialogues]
+- [RuBQ_2.0]
+- [da_net_qa]
+- [parus]
 
 - [package project](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
 - [install project from git](https://stackoverflow.com/questions/15268953/how-to-install-python-package-from-github)
