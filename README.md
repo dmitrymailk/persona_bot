@@ -61,13 +61,13 @@ Seq2Seq:
 
 # hypothesis 5
 - русский бот
-- [ru_persona_chat]
-- [cornell_movie_corpus]
-- [ru_anekdots_dialogs]
-- [flibusta_dialogues]
-- [RuBQ_2.0]
-- [da_net_qa]
-- [parus]
+- [x] [ru_persona_chat]
+- [x] [cornell_movie_corpus]
+- [x] [ru_anekdots_dialogs]
+- [x] [flibusta_dialogues]
+- [x] [RuBQ_2.0]
+- [x] [da_net_qa]
+- [x] [parus]
 
 - [package project](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
 - [install project from git](https://stackoverflow.com/questions/15268953/how-to-install-python-package-from-github)
