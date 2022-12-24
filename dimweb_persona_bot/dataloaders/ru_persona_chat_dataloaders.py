@@ -170,3 +170,15 @@ class RUPersonaChatDatasetV2(RUPersonaChatDatasetV1):
             )
 
         return dataset
+
+
+class RUPersonaChatDatasetV3(RUPersonaChatDatasetV1):
+    """
+    для чтения изначального датасета формата tsv
+    """
+    def _read_dataset(self, input_path: str) -> Dict:
+        dataset = pd.read_csv(
+            input_path,
+            sep="\t",
+        )
+        return dataset
