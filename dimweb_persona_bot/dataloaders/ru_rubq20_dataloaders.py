@@ -23,12 +23,13 @@ class RURubq20DatasetV1(BaseInitialDatasetV1):
                 if info_paragraph is not None:
                     info_paragraph = info_paragraph["text"]
 
+            answer_text = question.get("answer_text", "Нет ответа")
             dataset.append(
                 BaseDialogSampleV1(
                     context=[question["question_text"]],
                     knowledge=[info_paragraph],
                     sample_id=f"RURubq20V1_{dialog_id}",
-                    label=question["answer_text"],
+                    label=answer_text,
                     dataset_source="RURubq20V1",
                 )
             )

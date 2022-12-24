@@ -16,6 +16,7 @@ class RUFlibustaDialogsDatasetV1(BaseInitialDatasetV1):
 
             for i in range(1, len(dialog) // 2 + 1):
                 context = dialog[: i * 2]
+                context[-self.dialog_pair_length * 2 :]
                 label = context.pop()
                 sample = BaseDialogSampleV1(
                     context=context,
@@ -29,6 +30,7 @@ class RUFlibustaDialogsDatasetV1(BaseInitialDatasetV1):
             dialog.pop(0)
             for i in range(1, len(dialog) // 2 + 1):
                 context = dialog[: i * 2]
+                context[-self.dialog_pair_length * 2 :]
                 label = context.pop()
                 sample = BaseDialogSampleV1(
                     context=context,
