@@ -5,7 +5,7 @@ from dimweb_persona_bot.dataloaders.datasets import (
 from typing import List
 
 
-class RURubq20V1(BaseInitialDatasetV1):
+class RURubq20DatasetV1(BaseInitialDatasetV1):
     def _create_initial_dataset(self, initial_dataset) -> List[BaseDialogSampleV1]:
         dataset = []
 
@@ -26,7 +26,7 @@ class RURubq20V1(BaseInitialDatasetV1):
                 BaseDialogSampleV1(
                     context=[question["question_text"]],
                     knowledge=[info_paragraph],
-                    sample_id=f"{dialog_id}",
+                    sample_id=f"RURubq20V1_{dialog_id}",
                     label=question["answer_text"],
                     dataset_source="RURubq20V1",
                 )

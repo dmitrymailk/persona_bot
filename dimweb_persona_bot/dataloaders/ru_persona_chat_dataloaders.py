@@ -1,6 +1,9 @@
 from typing import List, Dict, TypedDict
 
-from dimweb_persona_bot.dataloaders.datasets import BaseInitialDatasetV1
+from dimweb_persona_bot.dataloaders.datasets import (
+    BaseInitialDatasetV1,
+    BaseDialogSampleV1,
+)
 from dimweb_persona_bot.dataloaders.persona_chat_dataloaders import (
     PersonaChatDatasetSampleV1,
 )
@@ -175,10 +178,52 @@ class RUPersonaChatDatasetV2(RUPersonaChatDatasetV1):
 class RUPersonaChatDatasetV3(RUPersonaChatDatasetV1):
     """
     для чтения изначального датасета формата tsv
+    и приведение к единому формату
     """
+
     def _read_dataset(self, input_path: str) -> Dict:
         dataset = pd.read_csv(
             input_path,
             sep="\t",
         )
+        return dataset
+
+    def _create_initial_dataset(
+        self,
+        initial_dataset: Dict,
+    ) -> List[BaseDialogSampleV1]:
+        dataset = []
+        for dialogue_id in range(len(initial_dataset)):
+            dialogue = initial_dataset.iloc[dialogue_id]["dialogue"]
+            history = self._extract_history(dialogue=dialogue)
+
+            first_persona = history[0]["persona_class"]
+            persona = []
+            if first_persona == "participant_2":
+                persona = self._extract_persona(
+                    initial_dataset.iloc[dialogue_id]["persona_1_profile"]
+                )
+            else:
+                persona = self._extract_persona(
+                    initial_dataset.iloc[dialogue_id]["persona_2_profile"]
+                )
+
+            history = [item["text"] for item in history]
+            history_len = len(history) // 2 + 1
+            for i in range(1, history_len):
+                sample_id = f"RUPersonaChatDatasetV3_{dialogue_id}_{i}"
+                context = history[: i * 2]
+                context = context[-self.dialog_pair_length * 2 :]
+                label = context.pop()
+
+                dataset.append(
+                    BaseDialogSampleV1(
+                        context=context,
+                        knowledge=persona,
+                        dataset_source="RUPersonaChatDatasetV3",
+                        label=label,
+                        sample_id=sample_id,
+                    )
+                )
+
         return dataset

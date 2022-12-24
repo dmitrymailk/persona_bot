@@ -5,7 +5,7 @@ from dimweb_persona_bot.dataloaders.datasets import (
 from typing import List
 
 
-class RUCornellMovieCorpusV1(BaseInitialDatasetV1):
+class RUCornellMovieCorpusDatasetV1(BaseInitialDatasetV1):
     def _create_initial_dataset(self, initial_dataset) -> List[BaseDialogSampleV1]:
         dataset = []
 
@@ -15,22 +15,26 @@ class RUCornellMovieCorpusV1(BaseInitialDatasetV1):
 
             for i in range(1, len(dialog) // 2 + 1):
                 context = dialog[: i * 2]
+                label = context.pop()
                 sample = BaseDialogSampleV1(
                     context=context,
                     knowledge="",
-                    sample_id=f"{dialog_id}_0_{i}",
+                    sample_id=f"RUCornellMovieCorpusV1_{dialog_id}_0_{i}",
                     dataset_source="RUCornellMovieCorpusV1",
+                    label=label,
                 )
                 dataset.append(sample)
 
             dialog.pop(0)
             for i in range(1, len(dialog) // 2 + 1):
                 context = dialog[: i * 2]
+                label = context.pop()
                 sample = BaseDialogSampleV1(
                     context=context,
                     knowledge="",
-                    sample_id=f"{dialog_id}_1_{i}",
+                    sample_id=f"RUCornellMovieCorpusV1_{dialog_id}_1_{i}",
                     dataset_source="RUCornellMovieCorpusV1",
+                    label=label,
                 )
                 dataset.append(sample)
 
