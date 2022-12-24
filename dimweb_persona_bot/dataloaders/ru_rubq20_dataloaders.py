@@ -3,13 +3,14 @@ from dimweb_persona_bot.dataloaders.datasets import (
     BaseDialogSampleV1,
 )
 from typing import List
+from tqdm import tqdm
 
 
 class RURubq20DatasetV1(BaseInitialDatasetV1):
     def _create_initial_dataset(self, initial_dataset) -> List[BaseDialogSampleV1]:
         dataset = []
 
-        for dialog_id, question in enumerate(initial_dataset["questions"]):
+        for dialog_id, question in tqdm(enumerate(initial_dataset["questions"])):
 
             info_paragraph_id = question["paragraphs_uids"]["with_answer"]
             info_paragraph = ""

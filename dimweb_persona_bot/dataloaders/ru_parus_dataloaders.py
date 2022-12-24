@@ -4,13 +4,14 @@ from dimweb_persona_bot.dataloaders.datasets import (
 )
 from typing import List
 import pandas as pd
+from tqdm import tqdm
 
 
 class RUParusDatasetV1(BaseInitialDatasetV1):
     def _create_initial_dataset(self, initial_dataset) -> List[BaseDialogSampleV1]:
         dataset = []
 
-        for i in range(len(initial_dataset)):
+        for i in tqdm(range(len(initial_dataset))):
             sample = initial_dataset.iloc[i]
             label = sample["label"] + 1
             column_name = f"choice{label}"

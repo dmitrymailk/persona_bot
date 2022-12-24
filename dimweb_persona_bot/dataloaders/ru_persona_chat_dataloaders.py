@@ -11,6 +11,7 @@ from dimweb_persona_bot.dataloaders.persona_chat_dataloaders import (
 import pandas as pd
 import re
 from bs4 import BeautifulSoup
+from tqdm import tqdm
 
 
 class RUPersonaChatReplicaV1(TypedDict):
@@ -193,7 +194,7 @@ class RUPersonaChatDatasetV3(RUPersonaChatDatasetV1):
         initial_dataset: Dict,
     ) -> List[BaseDialogSampleV1]:
         dataset = []
-        for dialogue_id in range(len(initial_dataset)):
+        for dialogue_id in tqdm(range(len(initial_dataset))):
             dialogue = initial_dataset.iloc[dialogue_id]["dialogue"]
             history = self._extract_history(dialogue=dialogue)
 

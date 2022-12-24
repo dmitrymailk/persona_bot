@@ -3,13 +3,14 @@ from dimweb_persona_bot.dataloaders.datasets import (
     BaseDialogSampleV1,
 )
 from typing import List
+from tqdm import tqdm
 
 
 class RUFlibustaDialogsDatasetV1(BaseInitialDatasetV1):
     def _create_initial_dataset(self, initial_dataset) -> List[BaseDialogSampleV1]:
         dataset = []
 
-        for dialog_id, dialog in enumerate(initial_dataset.split("\n\n\n\n")):
+        for dialog_id, dialog in tqdm(enumerate(initial_dataset.split("\n\n\n\n"))):
             dialog = dialog.split("\n")
             dialog = [self.filter_sentences(sentence) for sentence in dialog]
 

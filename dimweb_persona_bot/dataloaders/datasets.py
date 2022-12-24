@@ -50,7 +50,7 @@ class BaseInitialDatasetV1(AbstractInitialDataset):
 
         self.input_dataset_path = input_dataset_path
         self.dataset = []
-        
+
         self.sep = " <s> "
         self.knowledge_prefix = " <k> "
         self.context_prefix = "<c> "
@@ -78,24 +78,24 @@ class BaseInitialDatasetV1(AbstractInitialDataset):
         new_dataset = []
         for item in self.dataset:
             item: BaseDialogSampleV1
-            new_context = self._prepare_context(item['context'])
-            new_knowledge = self._prepare_knowledge(item['knowledge'])
+            new_context = self._prepare_context(item["context"])
+            new_knowledge = self._prepare_knowledge(item["knowledge"])
             new_dataset.append(
                 {
                     "context": new_context,
                     "knowledge": new_knowledge,
-                    "dataset_source": item['dataset_source'],
-                    "label": item['label'],
-                    "sample_id": item['sample_id'],
+                    "dataset_source": item["dataset_source"],
+                    "label": item["label"],
+                    "sample_id": item["sample_id"],
                 }
             )
         return pd.DataFrame(new_dataset)
-    
+
     def _prepare_context(self, context: List[str]) -> str:
         context = self.sep.join(context)
         context = self.context_prefix + context
         return context
-    
+
     def _prepare_knowledge(self, knowledge: List[str]) -> str:
         knowledge = self.sep.join(knowledge)
         knowledge = self.knowledge_prefix + knowledge
