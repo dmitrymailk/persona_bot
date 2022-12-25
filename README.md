@@ -83,3 +83,6 @@ twine upload dist/*
 ```bash
 du -sh -- *
 ```
+
+```bash
+pip install git+https://github.com/dmitrymailk/persona_bot.git@6f9749914bf008d1ec83b77b7bfda20cfaf5f2dd#dimweb-persona-bot
