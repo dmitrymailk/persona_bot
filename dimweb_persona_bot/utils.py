@@ -143,3 +143,15 @@ class WandbLoggerV2:
             notes=self.notes,
             tags=self.tags,
         )
+
+
+# def set_wandb_variables(
+#     hyperparameters: Dict,
+#     notes: str = "",
+#     tags: List[str] = [],
+# ):
+#     wandb_logger = WandbLoggerV2(hyperparameters, notes, tags).logger
+#     wandb_logger.watch_called = False
+#     wandb_logger.watch(model=None)
+#     wandb_logger.log_hyperparams(hyperparameters)
+#     return wandb_logger
