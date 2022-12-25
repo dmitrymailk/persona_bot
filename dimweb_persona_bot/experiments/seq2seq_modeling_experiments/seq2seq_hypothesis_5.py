@@ -91,24 +91,42 @@ def h5_experiment_1():
 
         return result
 
-    deepspeed_config = {
+    deepspeed_config_zero3 = {
+        "fp16": {
+            "enabled": "auto",
+            "loss_scale": 0,
+            "loss_scale_window": 1000,
+            "initial_scale_power": 16,
+            "hysteresis": 2,
+            "min_loss_scale": 1,
+        },
+        "optimizer": {
+            "type": "AdamW",
+            "params": {
+                "lr": "auto",
+                "betas": "auto",
+                "eps": "auto",
+                "weight_decay": "auto",
+            },
+        },
+        "scheduler": {
+            "type": "WarmupLR",
+            "params": {
+                "warmup_min_lr": "auto",
+                "warmup_max_lr": "auto",
+                "warmup_num_steps": "auto",
+            },
+        },
         "zero_optimization": {
             "stage": 3,
-            "offload_optimizer": {
-                "device": "nvme",
-                "nvme_path": "./local_nvme0",
-                "pin_memory": True,
-                "buffer_count": 4,
-                "fast_init": False,
-            },
-            "offload_param": {
-                "device": "nvme",
-                "nvme_path": "./local_nvme1",
-                "pin_memory": True,
-                "buffer_count": 5,
-                "buffer_size": 266055296,
-                "max_in_cpu": 1e9,
-            },
+            # "offload_optimizer": {
+            #     "device": "cpu",
+            #     "pin_memory": True,
+            # },
+            # "offload_param": {
+            #     "device": "cpu",
+            #     "pin_memory": True,
+            # },
             "overlap_comm": True,
             "contiguous_gradients": True,
             "sub_group_size": 1e9,
@@ -119,21 +137,60 @@ def h5_experiment_1():
             "stage3_max_reuse_distance": 1e9,
             "stage3_gather_16bit_weights_on_model_save": True,
         },
+        "gradient_accumulation_steps": "auto",
+        "gradient_clipping": "auto",
+        "steps_per_print": 2000,
+        "train_batch_size": "auto",
+        "train_micro_batch_size_per_gpu": "auto",
+        "wall_clock_breakdown": False,
+        "gradient_clipping": 1.0,
+    }
+
+    deepspeed_config_zero2 = {
         "fp16": {
-            "enabled": True,
+            "enabled": "auto",
             "loss_scale": 0,
             "loss_scale_window": 1000,
             "initial_scale_power": 16,
             "hysteresis": 2,
             "min_loss_scale": 1,
         },
-        "amp": {
-            "enabled": "auto",
-            "opt_level": "auto",
+        "optimizer": {
+            "type": "AdamW",
+            "params": {
+                "lr": "auto",
+                "betas": "auto",
+                "eps": "auto",
+                "weight_decay": "auto",
+            },
         },
+        "scheduler": {
+            "type": "WarmupLR",
+            "params": {
+                "warmup_min_lr": "auto",
+                "warmup_max_lr": "auto",
+                "warmup_num_steps": "auto",
+            },
+        },
+        "zero_optimization": {
+            "stage": 2,
+            "offload_optimizer": {
+                "device": "cpu",
+                "pin_memory": True,
+            },
+            "allgather_partitions": True,
+            "allgather_bucket_size": 2e8,
+            "overlap_comm": True,
+            "reduce_scatter": True,
+            "reduce_bucket_size": 2e8,
+            "contiguous_gradients": True,
+        },
+        "gradient_accumulation_steps": "auto",
+        "gradient_clipping": "auto",
+        "steps_per_print": 2000,
         "train_batch_size": "auto",
         "train_micro_batch_size_per_gpu": "auto",
-        "gradient_clipping": 1.0,
+        "wall_clock_breakdown": False,
     }
     # Initialize our Trainer
     args = Seq2SeqTrainingArguments(
@@ -146,14 +203,13 @@ def h5_experiment_1():
         predict_with_generate=True,
         report_to="wandb",
         output_dir="./huggingface_training/",
-        # per_device_train_batch_size=16,
-        # per_gpu_eval_batch_size=16,
+        # per_device_train_batch_size=8,
+        # per_gpu_eval_batch_size=8,
         logging_strategy="steps",
         logging_steps=10000,
         save_steps=10000,
         seed=2022,
         fp16=True,
-        # use_ipex=True,
         fp16_backend="auto",
         fp16_opt_level="O3",
         fp16_full_eval=True,
@@ -164,7 +220,8 @@ def h5_experiment_1():
         metric_for_best_model="blue_score",
         greater_is_better=True,
         dataloader_drop_last=True,
-        deepspeed=deepspeed_config,
+        # deepspeed=deepspeed_config_zero2,
+        deepspeed=deepspeed_config_zero3,
     )
 
     os.environ["WANDB_PROJECT"] = "persona_bot_2"
