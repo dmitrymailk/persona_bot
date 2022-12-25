@@ -1,1 +1,1 @@
-CUDA_VISIBLE_DEVICES=0 deepspeed --num_gpus=1 ./dimweb_persona_bot/train_scripts/seq2seq_training.py
+CUDA_VISIBLE_DEVICES=0 deepspeed --num_gpus=1 ./dimweb_persona_bot/experiments/seq2seq_modeling_experiments/seq2seq_hypothesis_5.py

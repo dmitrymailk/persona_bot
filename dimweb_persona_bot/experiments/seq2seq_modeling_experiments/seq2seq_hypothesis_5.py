@@ -30,7 +30,8 @@ check_min_version("4.25.1")
 def h5_experiment_1():
     set_seed(2022)
     setup_gpus()
-    model_name = "facebook/mbart-large-50"
+    # model_name = "facebook/mbart-large-50"
+    model_name = "google/t5-efficient-tiny-nl8"
     # accelerator = Accelerator(
     #     mixed_precision='fp16',
     #     log_with='wandb',
@@ -127,6 +128,21 @@ def h5_experiment_1():
             #     "device": "cpu",
             #     "pin_memory": True,
             # },
+            # "offload_optimizer": {
+            #     "device": "nvme",
+            #     "nvme_path": "./local_nvme0",
+            #     "pin_memory": True,
+            #     "buffer_count": 4,
+            #     "fast_init": False,
+            # },
+            # "offload_param": {
+            #     "device": "nvme",
+            #     "nvme_path": "./local_nvme1",
+            #     "pin_memory": True,
+            #     "buffer_count": 5,
+            #     "buffer_size": 276055296,
+            #     "max_in_cpu": 1e9,
+            # },
             "overlap_comm": True,
             "contiguous_gradients": True,
             "sub_group_size": 1e9,
@@ -137,8 +153,7 @@ def h5_experiment_1():
             "stage3_max_reuse_distance": 1e9,
             "stage3_gather_16bit_weights_on_model_save": True,
         },
-        "gradient_accumulation_steps": "auto",
-        "gradient_clipping": "auto",
+        "gradient_accumulation_steps": 1,
         "steps_per_print": 2000,
         "train_batch_size": "auto",
         "train_micro_batch_size_per_gpu": "auto",
@@ -195,25 +210,25 @@ def h5_experiment_1():
     # Initialize our Trainer
     args = Seq2SeqTrainingArguments(
         evaluation_strategy="steps",
+        # evaluation_strategy="no",
         save_strategy="steps",
         learning_rate=2e-5,
         weight_decay=0.01,
         save_total_limit=3,
-        num_train_epochs=3,
+        num_train_epochs=2,
         predict_with_generate=True,
         report_to="wandb",
         output_dir="./huggingface_training/",
-        # per_device_train_batch_size=8,
-        # per_gpu_eval_batch_size=8,
+        per_device_train_batch_size=32,
+        per_gpu_eval_batch_size=64,
         logging_strategy="steps",
         logging_steps=10000,
         save_steps=10000,
         seed=2022,
-        fp16=True,
-        fp16_backend="auto",
-        fp16_opt_level="O3",
-        fp16_full_eval=True,
-        half_precision_backend="auto",
+        fp16=False,
+        # fp16_opt_level="O3",
+        # fp16_full_eval=True,
+        # half_precision_backend="auto",
         dataloader_num_workers=8,
         run_name=model_name,
         load_best_model_at_end=True,
@@ -221,19 +236,13 @@ def h5_experiment_1():
         greater_is_better=True,
         dataloader_drop_last=True,
         # deepspeed=deepspeed_config_zero2,
-        deepspeed=deepspeed_config_zero3,
+        # deepspeed=deepspeed_config_zero3,
     )
 
     os.environ["WANDB_PROJECT"] = "persona_bot_2"
     os.environ["WANDB_TAGS"] = "ru_dialog_dataset_v1,seq2seq_modeling,hypothesis_5"
 
     train_dataloader, eval_dataloader = dataset["train"], dataset["test"]
-
-    # model, train_dataloader, eval_dataloader = accelerator.prepare(
-    #     model,
-    #     train_dataloader,
-    #     eval_dataloader,
-    # )
 
     data_collator = DataCollatorForSeq2Seq(
         tokenizer,
@@ -263,3 +272,7 @@ def h5_experiment_1():
     trainer.save_state()
 
     wandb.finish()
+
+
+if __name__ == "__main__":
+    h5_experiment_1()
