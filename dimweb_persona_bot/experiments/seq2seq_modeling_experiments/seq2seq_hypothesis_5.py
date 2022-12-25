@@ -20,7 +20,8 @@ from transformers.utils import check_min_version
 from dimweb_persona_bot.utils import TextEvaluator, setup_gpus
 
 import wandb
-
+from accelerate import Accelerator
+import torch
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
 check_min_version("4.25.1")
@@ -30,17 +31,21 @@ def h5_experiment_1():
     set_seed(2022)
     setup_gpus()
     model_name = "facebook/mbart-large-50"
+    # accelerator = Accelerator(
+    #     mixed_precision='fp16',
+    #     log_with='wandb',
+
+    # )
+    device = "cuda" if torch.cuda.is_available() else "cpu"
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+    model.to(device)
     dataset = load_from_disk("./datasets/ru_dialog_dataset_v1/")
     dataset = dataset.remove_columns(
         [
-            "dataset_source",
             "label",
-            "sample_id",
-            "input_ids",
-            "attention_mask",
-            "labels",
+            "knowledge",
+            "context",
         ]
     )
     # Metric
@@ -86,6 +91,57 @@ def h5_experiment_1():
 
         return result
 
+    deepspeed_config = {
+        "zero_optimization": {
+            "stage": 3,
+            "offload_optimizer": {
+                "device": "nvme",
+                "nvme_path": "/dev/nvme0",
+                "pin_memory": True,
+                "buffer_count": 4,
+                "fast_init": False,
+            },
+            "offload_param": {
+                "device": "nvme",
+                "nvme_path": "/dev/nvme0",
+                "pin_memory": True,
+                "buffer_count": 5,
+                "buffer_size": 1e8,
+                "max_in_cpu": 1e9,
+            },
+            "aio": {
+                "block_size": 262144,
+                "queue_depth": 32,
+                "thread_count": 1,
+                "single_submit": False,
+                "overlap_events": True,
+            },
+            "overlap_comm": True,
+            "contiguous_gradients": True,
+            "sub_group_size": 1e9,
+            "reduce_bucket_size": "auto",
+            "stage3_prefetch_bucket_size": "auto",
+            "stage3_param_persistence_threshold": "auto",
+            "stage3_max_live_parameters": 1e9,
+            "stage3_max_reuse_distance": 1e9,
+            "stage3_gather_16bit_weights_on_model_save": True,
+        },
+        "fp16": {
+            "enabled": True,
+            "loss_scale": 0,
+            "loss_scale_window": 1000,
+            "initial_scale_power": 16,
+            "hysteresis": 2,
+            "min_loss_scale": 1,
+        },
+        "amp": {
+            "enabled": "auto",
+            "opt_level": "auto",
+        },
+        "train_batch_size": "auto",
+        "train_micro_batch_size_per_gpu": "auto",
+        "gradient_clipping": 1.0,
+    }
     # Initialize our Trainer
     args = Seq2SeqTrainingArguments(
         evaluation_strategy="steps",
@@ -95,28 +151,39 @@ def h5_experiment_1():
         save_total_limit=3,
         num_train_epochs=3,
         predict_with_generate=True,
-        fp16=True,
         report_to="wandb",
         output_dir="./huggingface_training/",
-        per_device_train_batch_size=16,
-        per_gpu_eval_batch_size=32,
+        # per_device_train_batch_size=16,
+        # per_gpu_eval_batch_size=16,
         logging_strategy="steps",
         logging_steps=10000,
         save_steps=10000,
         seed=2022,
-        use_ipex=True,
+        fp16=True,
+        # use_ipex=True,
+        fp16_backend="auto",
         fp16_opt_level="O3",
         fp16_full_eval=True,
-        # dataloader_num_workers=8,
+        half_precision_backend="auto",
+        dataloader_num_workers=8,
         run_name=model_name,
         load_best_model_at_end=True,
         metric_for_best_model="blue_score",
         greater_is_better=True,
         dataloader_drop_last=True,
+        deepspeed=deepspeed_config,
     )
 
     os.environ["WANDB_PROJECT"] = "persona_bot_2"
     os.environ["WANDB_TAGS"] = "ru_dialog_dataset_v1,seq2seq_modeling,hypothesis_5"
+
+    train_dataloader, eval_dataloader = dataset["train"], dataset["test"]
+
+    # model, train_dataloader, eval_dataloader = accelerator.prepare(
+    #     model,
+    #     train_dataloader,
+    #     eval_dataloader,
+    # )
 
     data_collator = DataCollatorForSeq2Seq(
         tokenizer,
@@ -128,14 +195,14 @@ def h5_experiment_1():
     trainer = Seq2SeqTrainer(
         model=model,
         args=args,
-        train_dataset=dataset["train"],
-        eval_dataset=dataset["test"],
+        train_dataset=train_dataloader,
+        eval_dataset=eval_dataloader,
         tokenizer=tokenizer,
-        # data_collator=data_collator,
+        data_collator=data_collator,
         compute_metrics=compute_metrics,
     )
 
-    trainer.evaluate(eval_dataset=dataset["test"])
+    trainer.evaluate(eval_dataset=eval_dataloader)
     train_result = trainer.train()
     trainer.save_model()  # Saves the tokenizer too for easy upload
 

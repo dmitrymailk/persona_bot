@@ -10,7 +10,7 @@
 			"request": "launch",
 			"module": "dimweb_persona_bot.train_scripts.causal_training",
 			"console": "integratedTerminal",
-			"justMyCode": true,
+			"justMyCode": false,
 			"args": [
 				"--debug_status",
 				"1",
@@ -24,7 +24,7 @@
 			"request": "launch",
 			"module": "dimweb_persona_bot.train_scripts.seq2seq_training",
 			"console": "integratedTerminal",
-			"justMyCode": true,
+			"justMyCode": false,
 			"args": [
 				"--debug_status",
 				"1",

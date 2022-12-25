@@ -173,3 +173,4 @@ telegram_bot_dialogues/*
 persona_bot_2
 flagged
 huggingface_training
+local_nvme
