@@ -22,6 +22,7 @@ from dimweb_persona_bot.utils import TextEvaluator, setup_gpus
 import wandb
 from accelerate import Accelerator
 import torch
+import gc
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
 check_min_version("4.25.1")
@@ -89,17 +90,19 @@ def h5_experiment_1():
             generated_texts=decoded_preds,
             original_texts=decoded_labels,
         )
-
+        # del preds, labels, decoded_preds, decoded_labels
+        # gc.collect()
+        # torch.cuda.empty_cache()
         return result
 
     deepspeed_config_zero3 = {
         "fp16": {
-            "enabled": "auto",
-            "loss_scale": 0,
+            "enabled": True,
+            "loss_scale": 0.5,
             "loss_scale_window": 1000,
             "initial_scale_power": 16,
             "hysteresis": 2,
-            "min_loss_scale": 1,
+            "min_loss_scale": 0.5,
         },
         "optimizer": {
             "type": "AdamW",
@@ -219,17 +222,18 @@ def h5_experiment_1():
         predict_with_generate=True,
         report_to="wandb",
         output_dir="./huggingface_training/",
-        per_device_train_batch_size=32,
-        per_gpu_eval_batch_size=64,
+        per_device_train_batch_size=16,
+        per_gpu_eval_batch_size=32,
         logging_strategy="steps",
         logging_steps=10000,
         save_steps=10000,
         seed=2022,
-        fp16=False,
-        # fp16_opt_level="O3",
+        fp16=True,
+        fp16_opt_level="O3",
         # fp16_full_eval=True,
-        # half_precision_backend="auto",
-        dataloader_num_workers=8,
+        fp16_backend="auto",
+        half_precision_backend="auto",
+        dataloader_num_workers=12,
         run_name=model_name,
         load_best_model_at_end=True,
         metric_for_best_model="blue_score",
@@ -237,6 +241,7 @@ def h5_experiment_1():
         dataloader_drop_last=True,
         # deepspeed=deepspeed_config_zero2,
         # deepspeed=deepspeed_config_zero3,
+        jit_mode_eval=True,
     )
 
     os.environ["WANDB_PROJECT"] = "persona_bot_2"

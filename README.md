@@ -89,5 +89,5 @@ pip install git+https://github.com/dmitrymailk/persona_bot.git@6f9749914bf008d1e
 ```
 
 ```bash
-pip install --upgrade --no-deps --force-reinstall dimweb_persona_bot-0.0.6.tar.gz  
+pip install --upgrade --no-deps --force-reinstall ./dist/dimweb_persona_bot-0.0.6.tar.gz  
 ```
