@@ -31,15 +31,17 @@ check_min_version("4.25.1")
 def h5_experiment_1():
     set_seed(2022)
     setup_gpus()
-    # model_name = "facebook/mbart-large-50"
-    model_name = "google/t5-efficient-tiny-nl8"
-    tokenizer_name = "./models/google-t5-efficient-tiny-nl8-ru"
+    model_name = "facebook/mbart-large-50"
+    # model_name = "google/t5-efficient-tiny-nl8"
+    # tokenizer_name = "./models/google-t5-efficient-tiny-nl8-ru"
+    tokenizer_name = "facebook/mbart-large-50"
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
     model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
     model.to(device)
-    dataset = load_from_disk("./datasets/ru_dialog_dataset_v1/")
+    # dataset = load_from_disk("./datasets/ru_dialog_dataset_v1/")
+    dataset = load_from_disk("./datasets/ru_dialog_dataset_v1_mbart-50/")
     dataset = dataset.remove_columns(
         [
             "label",
@@ -215,6 +217,7 @@ def h5_experiment_1():
         "wall_clock_breakdown": False,
     }
     # Initialize our Trainer
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
     os.environ["WANDB_PROJECT"] = "persona_bot_2"
     os.environ["WANDB_TAGS"] = "ru_dialog_dataset_v1,seq2seq_modeling,hypothesis_5"
     os.environ["WANDB_NAME"] = model_name
@@ -231,17 +234,17 @@ def h5_experiment_1():
         predict_with_generate=True,
         report_to="wandb",
         output_dir=f"./huggingface_training/{run_id}/",
-        per_device_train_batch_size=32,
-        per_gpu_eval_batch_size=128,
+        per_device_train_batch_size=8,
+        per_gpu_eval_batch_size=32,
         logging_strategy="steps",
         logging_steps=5000,
         save_steps=5000,
         seed=2022,
         fp16=False,
-        # fp16_opt_level="O3",
-        # fp16_full_eval=True,
-        # fp16_backend="auto",
-        # half_precision_backend="auto",
+        fp16_opt_level="O3",
+        fp16_full_eval=True,
+        fp16_backend="auto",
+        half_precision_backend="auto",
         dataloader_num_workers=12,
         run_name=model_name,
         load_best_model_at_end=True,
