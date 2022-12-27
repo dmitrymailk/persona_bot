@@ -39,10 +39,10 @@ class TextEvaluator:
         original_texts: List[str],
     ):
         original_texts = [item if item != "" else " " for item in original_texts]
-
+        references = [[item] for item in original_texts]
         blue_score = self.bleu.compute(
             predictions=generated_texts,
-            references=[[item] for item in original_texts],
+            references=references,
         )["score"]
 
         # compute rouge score
@@ -54,14 +54,15 @@ class TextEvaluator:
         rougeL_score /= len(generated_texts)
 
         # compute chrf score
-        chrf_score = self.chrf(
-            generated_texts, [[item] for item in original_texts]
-        ).item()
+        # chrf_score = self.chrf(
+        #     generated_texts,
+        #     references,
+        # ).item()
 
         return {
             "blue_score": blue_score,
             "rougeL_score": rougeL_score,
-            "chrf_score": chrf_score,
+            # "chrf_score": chrf_score,
         }
 
 

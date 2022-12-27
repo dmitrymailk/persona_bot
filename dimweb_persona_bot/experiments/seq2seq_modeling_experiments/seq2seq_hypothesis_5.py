@@ -33,13 +33,10 @@ def h5_experiment_1():
     setup_gpus()
     # model_name = "facebook/mbart-large-50"
     model_name = "google/t5-efficient-tiny-nl8"
-    # accelerator = Accelerator(
-    #     mixed_precision='fp16',
-    #     log_with='wandb',
+    tokenizer_name = "./models/google-t5-efficient-tiny-nl8-ru"
 
-    # )
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
     model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
     model.to(device)
     dataset = load_from_disk("./datasets/ru_dialog_dataset_v1/")
@@ -61,6 +58,8 @@ def h5_experiment_1():
 
     def compute_metrics(eval_preds):
         preds, labels = eval_preds
+        # print("all_columns", all_columns)
+
         if isinstance(preds, tuple):
             preds = preds[0]
 
@@ -90,9 +89,14 @@ def h5_experiment_1():
             generated_texts=decoded_preds,
             original_texts=decoded_labels,
         )
-        # del preds, labels, decoded_preds, decoded_labels
-        # gc.collect()
-        # torch.cuda.empty_cache()
+        run_id = wandb.run.id
+        with open(f"./huggingface_training/{run_id}/result.txt", "a") as f:
+            f.write("-" * 100 + "\n")
+            f.write("-" * 50 + "EPOCH" + "-" * 50 + "\n")
+            f.write("-" * 100 + "\n")
+            for pred, label in zip(decoded_preds, decoded_labels):
+                f.write(f"pred: {pred} label: {label}\n")
+
         return result
 
     deepspeed_config_zero3 = {
@@ -211,6 +215,11 @@ def h5_experiment_1():
         "wall_clock_breakdown": False,
     }
     # Initialize our Trainer
+    os.environ["WANDB_PROJECT"] = "persona_bot_2"
+    os.environ["WANDB_TAGS"] = "ru_dialog_dataset_v1,seq2seq_modeling,hypothesis_5"
+    os.environ["WANDB_NAME"] = model_name
+    wandb.init()
+    run_id = wandb.run.id
     args = Seq2SeqTrainingArguments(
         evaluation_strategy="steps",
         # evaluation_strategy="no",
@@ -221,12 +230,12 @@ def h5_experiment_1():
         num_train_epochs=2,
         predict_with_generate=True,
         report_to="wandb",
-        output_dir="./huggingface_training/",
+        output_dir=f"./huggingface_training/{run_id}/",
         per_device_train_batch_size=32,
         per_gpu_eval_batch_size=128,
         logging_strategy="steps",
-        logging_steps=1000,
-        save_steps=1000,
+        logging_steps=5000,
+        save_steps=5000,
         seed=2022,
         fp16=False,
         # fp16_opt_level="O3",
@@ -242,10 +251,8 @@ def h5_experiment_1():
         # deepspeed=deepspeed_config_zero2,
         # deepspeed=deepspeed_config_zero3,
         # jit_mode_eval=True,
+        # include_inputs_for_metrics=True,
     )
-
-    os.environ["WANDB_PROJECT"] = "persona_bot_2"
-    os.environ["WANDB_TAGS"] = "ru_dialog_dataset_v1,seq2seq_modeling,hypothesis_5"
 
     train_dataloader, eval_dataloader = dataset["train"], dataset["test"]
 
