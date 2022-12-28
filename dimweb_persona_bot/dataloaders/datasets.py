@@ -51,9 +51,7 @@ class BaseInitialDatasetV1(AbstractInitialDataset):
         self.input_dataset_path = input_dataset_path
         self.dataset = []
 
-        self.sep = " <s> "
-        self.knowledge_prefix = " <k> "
-        self.context_prefix = "<c> "
+        self.sep = " <sep> "
         # чисто интуитивно мне кажется что 4 это оптимальное число
         # для количества пар диалога
         self.dialog_pair_length = 4
@@ -93,10 +91,8 @@ class BaseInitialDatasetV1(AbstractInitialDataset):
 
     def _prepare_context(self, context: List[str]) -> str:
         context = self.sep.join(context)
-        context = self.context_prefix + context
         return context
 
     def _prepare_knowledge(self, knowledge: List[str]) -> str:
-        knowledge = self.sep.join(knowledge)
-        knowledge = self.knowledge_prefix + knowledge
+        knowledge = " ".join(knowledge)
         return knowledge

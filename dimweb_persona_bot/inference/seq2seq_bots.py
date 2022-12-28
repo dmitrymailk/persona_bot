@@ -203,6 +203,16 @@ def chat_with_model_persona_bot_2_28akcwik():
     bot2.start_chat()
 
 
+def chat_with_model_persona_bot_2_2wcqzym7_checkpoint_60000():
+    setup_gpus()
+    model_path = "./models/2wcqzym7/checkpoint-60000"
+    device = "cuda"
+
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
+    model.to(device)
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
+
+
 if __name__ == "__main__":
     # python -m dimweb_persona_bot.inference.seq2seq_bots
     setup_gpus()

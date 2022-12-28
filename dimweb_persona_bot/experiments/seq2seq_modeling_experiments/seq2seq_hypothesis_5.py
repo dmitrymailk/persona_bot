@@ -36,8 +36,12 @@ def h5_experiment_1():
     # tokenizer_name = "./models/google-t5-efficient-tiny-nl8-ru"
     tokenizer_name = "facebook/mbart-large-50"
 
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+    device = "cuda"
+    tokenizer = AutoTokenizer.from_pretrained(
+        tokenizer_name,
+        src_lang="ru_RU",
+        tgt_lang="ru_RU",
+    )
     model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
     model.to(device)
     # dataset = load_from_disk("./datasets/ru_dialog_dataset_v1/")
@@ -233,13 +237,13 @@ def h5_experiment_1():
         predict_with_generate=True,
         report_to="wandb",
         output_dir=f"./huggingface_training/{run_id}/",
-        per_device_train_batch_size=4,
-        per_gpu_eval_batch_size=16,
+        per_device_train_batch_size=4 * 2,
+        per_gpu_eval_batch_size=16 * 2,
         logging_strategy="steps",
-        logging_steps=10000,
-        save_steps=10000,
+        logging_steps=5000,
+        save_steps=5000,
         seed=2022,
-        # fp16=False,
+        fp16=True,
         # fp16_opt_level="O3",
         # fp16_full_eval=True,
         # fp16_backend="auto",
@@ -247,7 +251,7 @@ def h5_experiment_1():
         dataloader_num_workers=8,
         run_name=model_name,
         load_best_model_at_end=True,
-        metric_for_best_model="blue_score",
+        metric_for_best_model="loss",
         greater_is_better=True,
         dataloader_drop_last=True,
         # deepspeed=deepspeed_config_zero2,

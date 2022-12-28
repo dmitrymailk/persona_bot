@@ -227,4 +227,14 @@ class RUPersonaChatDatasetV3(RUPersonaChatDatasetV1):
                     )
                 )
 
+                dataset.append(
+                    BaseDialogSampleV1(
+                        context=context,
+                        knowledge=[""],
+                        dataset_source="RUPersonaChatDatasetV3",
+                        label=label,
+                        sample_id=sample_id,
+                    )
+                )
+
         return dataset
