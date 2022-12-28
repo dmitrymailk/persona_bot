@@ -2,10 +2,8 @@ import logging
 import random
 from typing import TypedDict
 
-from dimweb_persona_bot.inference.seq2seq_bots import DialogBotV2
-from dimweb_persona_bot.hyperparameters.causal_modeling_hyperparameters import (
-    H2PersonaChatHyperparametersV1,
-)
+from dimweb_persona_bot.inference.seq2seq_bots import DialogBotV3
+
 
 from telegram import (
     Update,
@@ -33,30 +31,23 @@ logger = logging.getLogger(__name__)
 
 DIALOG = range(1)
 
-model_name = "./models/2vabb4b2/"
-model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-device = "cuda:0"
-model.to(device)
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-hyperparameters = H2PersonaChatHyperparametersV1(
-    model_architecture="seq2seq",
-    chat_history_pair_length=3,
-    persona_max_length=31,
-    chat_max_length=166,
+path = "./models/2uuglxhm/checkpoint-180000"
+model = AutoModelForSeq2SeqLM.from_pretrained(path)
+model.to("cuda")
+tokenizer = AutoTokenizer.from_pretrained(path)
+
+ru_bot = DialogBotV3(
+    model=model,
+    tokenizer=tokenizer,
+    history=[],
+    debug_status=0,
 )
 
-
-profiles = pd.read_csv(
-    "./datasets/ru_persona_chat/profiles.tsv",
-    delimiter="\t",
-)
-
-PROFILES_LENGTH = len(profiles)
 
 SUPER_SIMPLE_DATABASE = {}
 
 reply_markup = ReplyKeyboardMarkup(
-    [["/stop"]],
+    [["/start", "/stop"]],
     resize_keyboard=True,
 )
 
@@ -87,22 +78,24 @@ class MessageQueue:
             message = waiter["update_object"].message.text
             user_username = waiter["user_username"]
 
-            persona = SUPER_SIMPLE_DATABASE[user_username]["persona"]
             history = SUPER_SIMPLE_DATABASE[user_username]["history"]
 
             history.append(message)
 
-            bot2 = DialogBotV2(
+            bot2 = DialogBotV3(
                 model=model,
                 tokenizer=tokenizer,
-                hyperparameters=hyperparameters,
                 history=history,
-                persona=persona,
             )
             bot_response = bot2.next_response()
 
             update_object = waiter["update_object"]
             history.append(bot_response)
+
+            if len(history) > 3:
+                if history[-3] == history[-1]:
+                    history = []
+
             SUPER_SIMPLE_DATABASE[user_username]["history"] = history
 
             logger.info("Bot response %s : %s", message, bot_response)
@@ -134,18 +127,7 @@ async def start(
     if user_username not in SUPER_SIMPLE_DATABASE:
         SUPER_SIMPLE_DATABASE[user_username] = {
             "history": [],
-            "persona": [],
         }
-        random_persona = profiles.iloc[random.randint(0, PROFILES_LENGTH - 1)]
-        persona = random_persona.values.tolist()
-        # filter nan
-        random_persona = [item for item in persona if type(item) == str]
-        await update.message.reply_text(
-            "Персона бота:\n" + "\n".join(random_persona),
-            reply_markup=reply_markup,
-        )
-
-        SUPER_SIMPLE_DATABASE[user_username]["persona"] = random_persona
 
     return DIALOG
 
