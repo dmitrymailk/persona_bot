@@ -31,16 +31,25 @@ logger = logging.getLogger(__name__)
 
 DIALOG = range(1)
 
-path = "./models/2uuglxhm/checkpoint-180000"
+path = "./models/2uuglxhm/checkpoint-720000"
 model = AutoModelForSeq2SeqLM.from_pretrained(path)
-model.to("cuda")
-tokenizer = AutoTokenizer.from_pretrained(path)
+device = "cuda"
+model.to(device)
+model.eval()
+model.half()
+tokenizer = AutoTokenizer.from_pretrained(
+    path,
+    src_lang="ru_RU",
+    tgt_lang="ru_RU",
+)
 
 ru_bot = DialogBotV3(
     model=model,
     tokenizer=tokenizer,
     history=[],
-    debug_status=0,
+    debug_status=1,
+    device=device,
+    max_pairs=1,
 )
 
 
@@ -86,6 +95,8 @@ class MessageQueue:
                 model=model,
                 tokenizer=tokenizer,
                 history=history,
+                max_pairs=1,
+                debug_status=1,
             )
             bot_response = bot2.next_response()
 

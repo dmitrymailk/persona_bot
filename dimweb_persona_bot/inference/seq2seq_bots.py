@@ -178,7 +178,7 @@ class DialogBotV3:
         tokenizer: AutoTokenizer,
         history: List[str] = None,
         device: str = "cuda",
-        max_pairs: int = 4,
+        max_pairs: int = 3,
         max_response_length: int = 200,
         debug_status: int = 0,
         sep_token: str = " <sep> ",
@@ -216,6 +216,11 @@ class DialogBotV3:
             )["input_ids"],
             add_special_tokens=False,
         )
+
+        if self.debug_status == 1:
+            print(f"history: {history}")
+            print(f"last_response: {last_response}")
+            print(f"self.max_pairs: {self.max_pairs}")
 
         history = self.sep_token.join(history)
         print(history)
@@ -292,8 +297,10 @@ class DialogBotV3:
         return self.model.generate(
             **sample,
             max_new_tokens=self.max_response_length,
-            penalty_alpha=0.15,
+            penalty_alpha=0.2,
             top_k=10,
+            # min_length=8,
+            top_p=0.98,
             do_sample=True,
         )
 
@@ -354,7 +361,7 @@ def chat_with_model_persona_bot_2_28akcwik():
 
 def chat_with_model_ru_mbart_50():
     setup_gpus()
-    path = "./models/2uuglxhm/checkpoint-160000"
+    path = "./models/2uuglxhm/checkpoint-440000"
     model = AutoModelForSeq2SeqLM.from_pretrained(path)
     model.to("cuda")
     tokenizer = AutoTokenizer.from_pretrained(path)
@@ -364,6 +371,7 @@ def chat_with_model_ru_mbart_50():
         tokenizer=tokenizer,
         history=[],
         debug_status=1,
+        max_pairs=1,
     )
 
     ru_bot.start_chat()
