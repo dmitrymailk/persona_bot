@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 DIALOG = range(1)
 
-path = "./models/2uuglxhm/checkpoint-720000"
+path = "./models/2uuglxhm/checkpoint-1260000"
 model = AutoModelForSeq2SeqLM.from_pretrained(path)
 device = "cuda"
 model.to(device)
@@ -49,7 +49,7 @@ ru_bot = DialogBotV3(
     history=[],
     debug_status=1,
     device=device,
-    max_pairs=1,
+    max_pairs=0,
 )
 
 
@@ -95,7 +95,7 @@ class MessageQueue:
                 model=model,
                 tokenizer=tokenizer,
                 history=history,
-                max_pairs=1,
+                max_pairs=0,
                 debug_status=1,
             )
             bot_response = bot2.next_response()

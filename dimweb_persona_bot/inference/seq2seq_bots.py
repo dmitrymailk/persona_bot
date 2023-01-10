@@ -204,8 +204,8 @@ class DialogBotV3:
     ):
         history = history.copy()
         last_response = [history.pop()]
-        history = history[-self.max_pairs * 2 :]
-        history = history + last_response
+        # history = history[-self.max_pairs * 2 :]
+        history = last_response
 
         history = self.tokenizer.batch_decode(
             self.tokenizer.batch_encode_plus(
